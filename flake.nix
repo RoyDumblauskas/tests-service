@@ -17,10 +17,36 @@
           name = "dioxus-web-app";
           src = ./.;
 
-          nativeBuildInputs = [ pkgs.dioxus-cli pkgs.rustc pkgs.cargo ];
+          nativeBuildInputs = with pkgs; [
+            dioxus-cli
+            rustc
+            cargo
+
+            # tauri deps?
+            pkg-config
+            gobject-introspection
+            cargo
+            cargo-tauri
+            nodejs
+          ];
+
+          buildInputs = with pkgs; [
+            at-spi2-atk
+            atkmm
+            cairo
+            gdk-pixbuf
+            glib
+            gtk3
+            harfbuzz
+            librsvg
+            libsoup_3
+            pango
+            webkitgtk_4_1
+            openssl
+          ];
 
           buildPhase = ''
-            dioxus build --release
+            dx build --release
           '';
 
           installPhase = ''
