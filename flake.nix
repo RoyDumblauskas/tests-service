@@ -42,6 +42,9 @@
             pango
             webkitgtk_4_1
             openssl
+            wasm-pack
+            wasm-bindgen-cli
+            lld
           ];
 
           buildPhase = ''
