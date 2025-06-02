@@ -4,7 +4,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    naersk.url = ""github:nmattia/naersk"";
+    naersk.url = "github:nmattia/naersk";
   };
 
   outputs = {
@@ -79,14 +79,10 @@
       pkgs = nixpkgs.legacyPackages.${system};
       naersk-lib = naersk.lib.${system};
 
-      dioxusApp = naersk-lib.buldPackage {
+      dioxusApp = naersk-lib.buildPackage {
         pname = "tests-service";
         version = "0.1.0";
         src = ./.;
-
-        cargoLock = {
-          lockFile = ./Cargo.lock;
-        };
 
           nativeBuildInputs = with pkgs; [
             dioxus-cli
