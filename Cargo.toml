@@ -26,3 +26,9 @@ inherits = "dev"
 
 [profile.android-dev]
 inherits = "dev"
+
+[source.crates-io]
+index = "https://github.com/rust-lang/crates.io-index" # Official github index
+
+[http]
+proxy = "" # leaving this as a blank string resets proxy to default
