@@ -42,11 +42,14 @@
           wantedBy = ["multi-user.target"];
           after = ["network.target"];
           serviceConfig = {
-            ExecStart = "${pkgs.simple-http-server}/bin/tests-service  --port ${ toString config.services.tests-service.port }";
+            ExecStart = "${self.packages.${pkgs.system}.default}/bin/tests-service}";
             Restart = "always";
             Type = "simple";
             DynamicUser = "yes";
             WorkingDirectory = "${self.packages.${pkgs.system}.default}";
+          };
+          environment = {
+            PORT = toString config.services.tests-service.port;
           };
         };
 
@@ -58,12 +61,6 @@
             acmeRoot = null;
             locations."/" = {
               proxyPass = "http://localhost:${toString config.services.tests-service.port}";
-              extraConfig = ''
-                proxy_set_header Host $host;
-                proxy_set_header X-Real-IP $remote_addr;
-                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                proxy_set_header X-Forwarded-Proto $scheme;
-              '';
             };
           };
         };
@@ -114,7 +111,7 @@
           ];
 
         buildPhase = ''
-          dx build --release
+          dx build --release 
         '';
 
         installPhase = ''
@@ -127,7 +124,7 @@
 
       apps.default = {
         type = "app";
-        program = "${dioxusApp}/index.html";
+        program = "${self.packages.${pkgs.system}.default}/bin/tests-service";
       };
     }))
     // {
