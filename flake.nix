@@ -81,7 +81,10 @@
         version = "0.1.0";
         src = ./.;
 
-        cargoVendorDir = ./vendor; 
+        cargoLock.lockFile = ./Cargo.lock;
+        cargoLock.outputHashes = {
+          "crc64fast-nvme-1.1.1" = "sha256-CvfkaDSG9XLnw2KAmKx7DYK3ubsCfLhPdOQGSIDJaxc=";
+        };  
 
           nativeBuildInputs = with pkgs; [
             dioxus-cli
@@ -113,7 +116,7 @@
           ];
 
         buildPhase = ''
-          dx bundle --release 
+          echo "Skipping dx build, using pre-bundled dist/"
         '';
 
         installPhase = ''
