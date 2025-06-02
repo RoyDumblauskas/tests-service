@@ -76,7 +76,7 @@
     (flake-utils.lib.eachDefaultSystem (system: let
       pkgs = nixpkgs.legacyPackages.${system};
 
-      dioxusApp = pkgs.stdenv.mkDerivation {
+      dioxusApp = pkgs.buildRustPackage {
         pname = "tests-service";
         version = "0.1.0";
         src = ./.;
