@@ -9,8 +9,7 @@
   outputs = {
     self,
     nixpkgs,
-    flake-utils,
-    rustPlatform
+    flake-utils
   }: let
     nixosModule = {
       config,
@@ -77,7 +76,7 @@
     (flake-utils.lib.eachDefaultSystem (system: let
       pkgs = nixpkgs.legacyPackages.${system};
 
-      dioxusApp = rustPlatform.buildRustPackage {
+      dioxusApp = pkgs.rustPlatform.buildRustPackage {
         pname = "tests-service";
         version = "0.1.0";
         src = ./.;
