@@ -27,6 +27,3 @@ inherits = "dev"
 [profile.android-dev]
 inherits = "dev"
 
-[[bin]]
-name = "tests-service"
-path = "src/main.rs"

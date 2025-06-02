@@ -4,14 +4,13 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    naersk.url = "github:nmattia/naersk";
   };
 
   outputs = {
     self,
     nixpkgs,
     flake-utils,
-    naersk
+    rustPlatform
   }: let
     nixosModule = {
       config,
@@ -77,12 +76,16 @@
   in
     (flake-utils.lib.eachDefaultSystem (system: let
       pkgs = nixpkgs.legacyPackages.${system};
-      naersk-lib = naersk.lib.${system};
 
-      dioxusApp = naersk-lib.buildPackage {
+      dioxusApp = rustPlatform.buildRustPackage {
         pname = "tests-service";
         version = "0.1.0";
         src = ./.;
+
+        cargoLock = {
+          lockFile = ./Cargo.lock;
+          allowBuiltinFetchGit = true;
+        };
 
           nativeBuildInputs = with pkgs; [
             dioxus-cli
