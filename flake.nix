@@ -76,10 +76,19 @@
     (flake-utils.lib.eachDefaultSystem (system: let
       pkgs = nixpkgs.legacyPackages.${system};
 
-      dioxusApp = pkgs.buildRustPackage {
+      rustPlatform = pkgs.makeRustPlatform {
+        cargo = pkgs.cargo;
+        rustc = pkgs.rustc;
+      };
+
+      dioxusApp = rustPlatform.buildRustPackage {
         pname = "tests-service";
         version = "0.1.0";
         src = ./.;
+
+        cargoLock = {
+          lockFile = ./Cargo.lock;
+        };
 
           nativeBuildInputs = with pkgs; [
             dioxus-cli
