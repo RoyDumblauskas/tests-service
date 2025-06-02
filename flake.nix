@@ -82,9 +82,6 @@
         src = ./.;
 
         cargoLock.lockFile = ./Cargo.lock;
-        cargoLock.outputHashes = {
-          "crc64fast-nvme-1.1.1" = "sha256-CvfkaDSG9XLnw2KAmKx7DYK3ubsCfLhPdOQGSIDJaxc=";
-        };  
 
           nativeBuildInputs = with pkgs; [
             dioxus-cli

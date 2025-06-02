@@ -1,0 +1,11 @@
+/home/roy/tests-service/target/release/deps/libdioxus_core_types-e1f7825701fe9bd6.rmeta: /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-core-types-0.6.2/src/lib.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-core-types-0.6.2/src/bubbles.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-core-types-0.6.2/src/bundled.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-core-types-0.6.2/src/formatter.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-core-types-0.6.2/src/hr_context.rs
+
+/home/roy/tests-service/target/release/deps/libdioxus_core_types-e1f7825701fe9bd6.rlib: /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-core-types-0.6.2/src/lib.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-core-types-0.6.2/src/bubbles.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-core-types-0.6.2/src/bundled.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-core-types-0.6.2/src/formatter.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-core-types-0.6.2/src/hr_context.rs
+
+/home/roy/tests-service/target/release/deps/dioxus_core_types-e1f7825701fe9bd6.d: /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-core-types-0.6.2/src/lib.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-core-types-0.6.2/src/bubbles.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-core-types-0.6.2/src/bundled.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-core-types-0.6.2/src/formatter.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-core-types-0.6.2/src/hr_context.rs
+
+/home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-core-types-0.6.2/src/lib.rs:
+/home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-core-types-0.6.2/src/bubbles.rs:
+/home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-core-types-0.6.2/src/bundled.rs:
+/home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-core-types-0.6.2/src/formatter.rs:
+/home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-core-types-0.6.2/src/hr_context.rs:

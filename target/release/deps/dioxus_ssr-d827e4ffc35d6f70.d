@@ -1,0 +1,12 @@
+/home/roy/tests-service/target/release/deps/libdioxus_ssr-d827e4ffc35d6f70.rmeta: /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-ssr-0.6.2/src/lib.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-ssr-0.6.2/src/cache.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-ssr-0.6.2/src/config.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-ssr-0.6.2/src/renderer.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-ssr-0.6.2/src/template.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-ssr-0.6.2/src/../README.md
+
+/home/roy/tests-service/target/release/deps/libdioxus_ssr-d827e4ffc35d6f70.rlib: /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-ssr-0.6.2/src/lib.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-ssr-0.6.2/src/cache.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-ssr-0.6.2/src/config.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-ssr-0.6.2/src/renderer.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-ssr-0.6.2/src/template.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-ssr-0.6.2/src/../README.md
+
+/home/roy/tests-service/target/release/deps/dioxus_ssr-d827e4ffc35d6f70.d: /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-ssr-0.6.2/src/lib.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-ssr-0.6.2/src/cache.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-ssr-0.6.2/src/config.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-ssr-0.6.2/src/renderer.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-ssr-0.6.2/src/template.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-ssr-0.6.2/src/../README.md
+
+/home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-ssr-0.6.2/src/lib.rs:
+/home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-ssr-0.6.2/src/cache.rs:
+/home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-ssr-0.6.2/src/config.rs:
+/home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-ssr-0.6.2/src/renderer.rs:
+/home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-ssr-0.6.2/src/template.rs:
+/home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dioxus-ssr-0.6.2/src/../README.md:

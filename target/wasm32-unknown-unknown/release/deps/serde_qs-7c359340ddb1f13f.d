@@ -1,0 +1,12 @@
+/home/roy/tests-service/target/wasm32-unknown-unknown/release/deps/libserde_qs-7c359340ddb1f13f.rmeta: /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_qs-0.12.0/src/lib.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_qs-0.12.0/src/de/mod.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_qs-0.12.0/src/de/parse.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_qs-0.12.0/src/error.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_qs-0.12.0/src/ser.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_qs-0.12.0/src/utils.rs
+
+/home/roy/tests-service/target/wasm32-unknown-unknown/release/deps/libserde_qs-7c359340ddb1f13f.rlib: /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_qs-0.12.0/src/lib.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_qs-0.12.0/src/de/mod.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_qs-0.12.0/src/de/parse.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_qs-0.12.0/src/error.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_qs-0.12.0/src/ser.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_qs-0.12.0/src/utils.rs
+
+/home/roy/tests-service/target/wasm32-unknown-unknown/release/deps/serde_qs-7c359340ddb1f13f.d: /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_qs-0.12.0/src/lib.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_qs-0.12.0/src/de/mod.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_qs-0.12.0/src/de/parse.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_qs-0.12.0/src/error.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_qs-0.12.0/src/ser.rs /home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_qs-0.12.0/src/utils.rs
+
+/home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_qs-0.12.0/src/lib.rs:
+/home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_qs-0.12.0/src/de/mod.rs:
+/home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_qs-0.12.0/src/de/parse.rs:
+/home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_qs-0.12.0/src/error.rs:
+/home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_qs-0.12.0/src/ser.rs:
+/home/roy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_qs-0.12.0/src/utils.rs:
