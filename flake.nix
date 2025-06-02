@@ -2,7 +2,7 @@
   description = "tests-service for Roy's Homelab";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
@@ -83,7 +83,7 @@
         version = "0.1.0";
         src = ./.;
 
-        buildInputs = with pkgs; [
+          nativeBuildInputs = with pkgs; [
             dioxus-cli
             rustc
             cargo
@@ -93,6 +93,9 @@
             gobject-introspection
             cargo-tauri
             nodejs
+          ];
+
+        buildInputs = with pkgs; [
             at-spi2-atk
             atkmm
             cairo
