@@ -50,7 +50,7 @@
           };
           environment = {
             PORT = toString config.services.tests-service.port;
-            IP = 0.0.0.0;
+            IP = "0.0.0.0";
           };
         };
 
@@ -86,7 +86,7 @@
             rustc
             cargo
 
-            # tauri deps?
+            # tauri deps
             pkg-config
             gobject-introspection
             cargo-tauri
@@ -112,7 +112,7 @@
           ];
 
         buildPhase = ''
-          dx build --release 
+          dx bundle --release 
         '';
 
         installPhase = ''
