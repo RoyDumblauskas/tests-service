@@ -3,133 +3,65 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    flake-utils
-  }: let
-    nixosModule = {
-      config,
-      lib,
-      pkgs,
-      ...
-    }: {
-      options.services.tests-service = {
-        enable = lib.mkEnableOption "Status reports for all homelab services";
+  outputs = { self, nixpkgs }: let
+    system = "x86_64-linux";
+    pkgs = nixpkgs.legacyPackages.${system};
 
-        port = lib.mkOption {
-          type = lib.types.port;
-          default = 8080;
-          description = "Port to listen on";
-        };
+    dioxusWebApp = pkgs.stdenv.mkDerivation {
+      pname = "tests-service";
+      version = "0.1.0";
+      src = ./.;
+
+      nativeBuildInputs = [ pkgs.cargo ]; # needed only if you actually run dx build inside the derivation
+
+      installPhase = ''
+        mkdir -p $out
+        cp -r dist/* $out/
+      '';
+    };
+
+    nixosModule = { config, lib, pkgs, ... }: {
+      options.services.tests-service = {
+        enable = lib.mkEnableOption "Enable Dioxus static web service";
 
         default-nginx = {
-          enable = lib.mkEnableOption "Enable nginx reverse proxy to direct to service";
+          enable = lib.mkEnableOption "Enable nginx reverse proxy to serve the static site";
           hostname = lib.mkOption {
             type = lib.types.str;
             default = "localhost";
-            description = "Hostname to attach to service";
+            description = "Hostname to serve the app";
           };
         };
       };
 
       config = lib.mkIf config.services.tests-service.enable {
-        systemd.services.tests-service = {
-          description = "Status page for homelab services";
-          wantedBy = ["multi-user.target"];
-          after = ["network.target"];
-          serviceConfig = {
-            ExecStart = "${self.packages.${pkgs.system}.default}/bin/tests-service}";
-            Restart = "always";
-            Type = "simple";
-            DynamicUser = "yes";
-            WorkingDirectory = "${self.packages.${pkgs.system}.default}";
-          };
-          environment = {
-            PORT = toString config.services.tests-service.port;
-            IP = "0.0.0.0";
-          };
-        };
-
+        # Serve the static site via nginx
         services.nginx = lib.mkIf config.services.tests-service.default-nginx.enable {
           enable = true;
           virtualHosts."${config.services.tests-service.default-nginx.hostname}" = {
             forceSSL = true;
             enableACME = true;
             acmeRoot = null;
+            root = "${dioxusWebApp}";
             locations."/" = {
-              proxyPass = "http://localhost:${toString config.services.tests-service.port}";
+              tryFiles = "$uri $uri/ /index.html";
             };
           };
         };
 
-        networking.firewall.allowedTCPPorts = lib.mkMerge [
-          (lib.mkIf config.services.tests-service.enable [ config.services.tests-service.port ])
-          (lib.mkIf config.services.tests-service.default-nginx.enable [ 80 443 ])
+        # Open necessary ports
+        networking.firewall.allowedTCPPorts = lib.mkIf config.services.tests-service.default-nginx.enable [
+          80 443
         ];
       };
     };
-  in
-    (flake-utils.lib.eachDefaultSystem (system: let
-      pkgs = nixpkgs.legacyPackages.${system};
 
-      dioxusApp = pkgs.rustPlatform.buildRustPackage {
-        pname = "tests-service";
-        version = "0.1.0";
-        src = ./.;
+  in {
+    packages.${system}.default = dioxusWebApp;
 
-        cargoLock.lockFile = ./Cargo.lock;
-
-          nativeBuildInputs = with pkgs; [
-            dioxus-cli
-            rustc
-            wasm-bindgen-cli
-            cargo
-
-            # tauri deps
-            pkg-config
-            gobject-introspection
-            cargo-tauri
-            nodejs
-
-            at-spi2-atk
-            atkmm
-            cairo
-            gdk-pixbuf
-            glib
-            gtk3
-            harfbuzz
-            librsvg
-            libsoup_3
-            pango
-            webkitgtk_4_1
-            openssl
-            wasm-pack
-            
-            lld
-          ];
-
-        buildPhase = ''
-          echo "Skipping dx build, using pre-bundled dist/"
-        '';
-
-        installPhase = ''
-          mkdir -p $out
-          cp -r dist/* $out/
-        '';
-      };
-    in {
-      packages.default = dioxusApp;
-
-      apps.default = {
-        type = "app";
-        program = "${self.packages.${pkgs.system}.default}/bin/tests-service";
-      };
-    }))
-    // {
-      nixosModules.default = nixosModule;
-    };
+    nixosModules.default = nixosModule;
+  };
 }
+
