@@ -28,7 +28,7 @@
 
         default-nginx = {
           enable = lib.mkEnableOption "Enable nginx reverse proxy to direct to service";
-          hostname = {
+          hostname = lib.mkOption {
             type = lib.types.str;
             default = "localhost";
             description = "Hostname to attach to service";
