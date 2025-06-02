@@ -2,7 +2,7 @@
   description = "Dioxus Web App with NixOS module";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
@@ -14,7 +14,7 @@
           name = "dioxus-web-app";
           src = ./.;
 
-          nativeBuildInputs = with pkgs; [
+          buildInputs = with pkgs; [
             dioxus-cli
             rustc
             cargo
@@ -24,9 +24,6 @@
             gobject-introspection
             cargo-tauri
             nodejs
-          ];
-
-          buildInputs = with pkgs; [
             at-spi2-atk
             atkmm
             cairo
@@ -78,8 +75,12 @@
           systemd.services.dioxus-web-app = {
             description = "Dioxus Web App Server";
             wantedBy = [ "multi-user.target" ];
+            after = ["network.target"];
             serviceConfig = {
               ExecStart = "${pkgs.simple-http-server}/bin/simple-http-server ${dioxusApp} --port ${toString cfg.port}";
+              Restart = "always";
+              Type = "simple";
+              DynamicUser = "yes";
               WorkingDirectory = dioxusApp;
             };
 
@@ -105,7 +106,7 @@
 
         networking.firewall.allowedTCPPorts = lib.mkMerge [
           (lib.mkIf cfg.enable [ cfg.port ])
-          (lib.mkIf cfg.nginx.enable [ 80 ])
+          (lib.mkIf cfg.nginx.enable [ 80 443 ])
         ];
       };
     };
