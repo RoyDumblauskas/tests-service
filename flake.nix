@@ -4,12 +4,14 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
+    naersk.url = ""github:nmattia/naersk"";
   };
 
   outputs = {
     self,
     nixpkgs,
     flake-utils,
+    naersk
   }: let
     nixosModule = {
       config,
@@ -75,13 +77,9 @@
   in
     (flake-utils.lib.eachDefaultSystem (system: let
       pkgs = nixpkgs.legacyPackages.${system};
+      naersk-lib = naersk.lib.${system};
 
-      rustPlatform = pkgs.makeRustPlatform {
-        cargo = pkgs.cargo;
-        rustc = pkgs.rustc;
-      };
-
-      dioxusApp = rustPlatform.buildRustPackage {
+      dioxusApp = naersk-lib.buldPackage {
         pname = "tests-service";
         version = "0.1.0";
         src = ./.;
@@ -93,6 +91,7 @@
           nativeBuildInputs = with pkgs; [
             dioxus-cli
             rustc
+            wasm-bindgen-cli
             cargo
 
             # tauri deps
@@ -100,9 +99,7 @@
             gobject-introspection
             cargo-tauri
             nodejs
-          ];
 
-        buildInputs = with pkgs; [
             at-spi2-atk
             atkmm
             cairo
@@ -116,7 +113,7 @@
             webkitgtk_4_1
             openssl
             wasm-pack
-            wasm-bindgen-cli
+            
             lld
           ];
 
