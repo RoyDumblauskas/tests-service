@@ -1,20 +1,89 @@
 {
-  description = "Dioxus Web App with NixOS module";
+  description = "tests-service for Roy's Homelab";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, flake-utils, ... }:
-    flake-utils.lib.eachDefaultSystem (system:
-      let pkgs = import nixpkgs { inherit system; };
+  outputs = {
+    self,
+    nixpkgs,
+    flake-utils,
+  }: let
+    nixosModule = {
+      config,
+      lib,
+      pkgs,
+      ...
+    }: {
+      options.services.tests-service = {
+        enable = lib.mkEnableOption "Status reports for all homelab services";
+
+        port = lib.mkOption {
+          type = lib.types.port;
+          default = 8080;
+          description = "Port to listen on";
+        };
+
+        default-nginx = {
+          enable = lib.mkEnableOption "Enable nginx reverse proxy to direct to service";
+          hostname = {
+            type = lib.types.str;
+            default = "localhost";
+            description = "Hostname to attach to service";
+          };
+        };
+      };
+
+      config = lib.mkIf config.services.tests-service.enable {
+        systemd.services.tests-service = {
+          description = "Status page for homelab services";
+          wantedBy = ["multi-user.target"];
+          after = ["network.target"];
+          serviceConfig = {
+            ExecStart = "${pkgs.simple-http-server}/bin/tests-service  --port ${ toString config.services.tests-service.port }";
+            Restart = "always";
+            Type = "simple";
+            DynamicUser = "yes";
+            WorkingDirectory = "${self.packages.${pkgs.system}.default}";
+          };
+        };
+
+        services.nginx = lib.mkIf config.services.tests-service.default-nginx.enable {
+          enable = true;
+          virtualHosts."${config.services.tests-service.default-nginx.hostname}" = {
+            forceSSL = true;
+            enableACME = true;
+            acmeRoot = null;
+            locations."/" = {
+              proxyPass = "http://localhost:${toString config.services.tests-service.port}";
+              extraConfig = ''
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+              '';
+            };
+          };
+        };
+
+        networking.firewall.allowedTCPPorts = lib.mkMerge [
+          (lib.mkIf config.services.tests-service.enable [ config.services.tests-service.port ])
+          (lib.mkIf config.services.tests-service.default-nginx.enable [ 80 443 ])
+        ];
+      };
+    };
+  in
+    (flake-utils.lib.eachDefaultSystem (system: let
+      pkgs = nixpkgs.legacyPackages.${system};
 
       dioxusApp = pkgs.stdenv.mkDerivation {
-          name = "dioxus-web-app";
-          src = ./.;
+        pname = "tests-service";
+        version = "0.1.0";
+        src = ./.;
 
-          buildInputs = with pkgs; [
+        buildInputs = with pkgs; [
             dioxus-cli
             rustc
             cargo
@@ -41,75 +110,24 @@
             lld
           ];
 
-          buildPhase = ''
-            dx build --release
-          '';
+        buildPhase = ''
+          dx build --release
+        '';
 
-          installPhase = ''
-            mkdir -p $out
-            cp -r dist/* $out/
-          '';
+        installPhase = ''
+          mkdir -p $out
+          cp -r dist/* $out/
+        '';
       };
     in {
       packages.default = dioxusApp;
 
-      # NixOS Module
-      nixosModules.default = {
-        config,
-        lib,
-        pkgs,
-        ...
-      }: let
-        cfg = config.services.dioxus-web-app;
-      in {
-        options.services.dioxus-web-app = {
-          enable = lib.mkEnableOption "Enable the Dioxus Web App";
-          port = lib.mkOption {
-            type = lib.types.port;
-            default = 8080;
-            description = "Port to serve the Dioxus web app on";
-          };
-        };
-
-        config = lib.mkIf cfg.enable {
-          systemd.services.dioxus-web-app = {
-            description = "Dioxus Web App Server";
-            wantedBy = [ "multi-user.target" ];
-            after = ["network.target"];
-            serviceConfig = {
-              ExecStart = "${pkgs.simple-http-server}/bin/simple-http-server ${dioxusApp} --port ${toString cfg.port}";
-              Restart = "always";
-              Type = "simple";
-              DynamicUser = "yes";
-              WorkingDirectory = dioxusApp;
-            };
-
-            # Nginx reverse proxy setup
-            services.nginx = lib.mkIf cfg.nginx.enable {
-              enable = true;
-              virtualHosts."${cfg.nginx.hostname}" = {
-                forceSSL = true;
-                enableAMCE = true;
-                acmeRoot = null;
-                locations."/" = {
-                  proxyPass = "http://localhost:${toString cfg.port}";
-                  extraConfig = ''
-                    proxy_set_header Host $host;
-                    proxy_set_header X-Real-IP $remote_addr;
-                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                    proxy_set_header X-Forwarded-Proto $scheme;
-                  '';
-                };
-              };
-            };
-          };
-
-        networking.firewall.allowedTCPPorts = lib.mkMerge [
-          (lib.mkIf cfg.enable [ cfg.port ])
-          (lib.mkIf cfg.nginx.enable [ 80 443 ])
-        ];
+      apps.default = {
+        type = "app";
+        program = "${dioxusApp}/index.html";
       };
+    }))
+    // {
+      nixosModules.default = nixosModule;
     };
-  });
 }
-
