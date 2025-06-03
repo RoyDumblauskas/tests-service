@@ -44,6 +44,12 @@
         lld
       ];
       
+      buildPhase = ''
+        ls
+        cargo build
+        ls
+      '';
+
       installPhase = ''
         tree -L 3
         dx bundle --platform web
