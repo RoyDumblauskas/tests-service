@@ -14,12 +14,47 @@
       version = "0.1.0";
       src = ./.;
 
-      nativeBuildInputs = [ pkgs.cargo ]; # needed only if you actually run dx build inside the derivation
+      nativeBuildInputs = with pkgs; [
+        dioxus-cli
+        rustc
+        wasm-bindgen-cli
+        cargo
 
-      installPhase = ''
-        mkdir -p $out
-        cp -r dist/* $out/
+        # tauri deps
+        pkg-config
+        gobject-introspection
+        cargo-tauri
+        nodejs
+
+        at-spi2-atk
+        atkmm
+        cairo
+        gdk-pixbuf
+        glib
+        gtk3
+        harfbuzz
+        librsvg
+        libsoup_3
+        pango
+        webkitgtk_4_1
+        openssl
+        wasm-pack          
+        lld
+      ];
+
+      buildPhase = ''
+        export HOME=$TMPDIR
+        dx bundle --platform web
+        echo "Contents of target:"
+        ls -R target
       '';
+
+    installPhase = ''
+        echo "Attempting to install from:"
+        ls -R target/dx/tests-service/release/web/public || true
+        mkdir -p $out
+        cp -r target/dx/tests-service/release/web/public/* $out/
+      ''; 
     };
 
     nixosModule = { config, lib, pkgs, ... }: {
