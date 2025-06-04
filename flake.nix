@@ -22,38 +22,36 @@
         wasm-bindgen-cli
         cargo
 
+        pango
+        cairo
+
         # tauri deps
         pkg-config
         gobject-introspection
         cargo-tauri
         nodejs
+      ];
 
+      buildInputs = with pkgs; [
         at-spi2-atk
-        atkmm
-        cairo
         gdk-pixbuf
         glib
         gtk3
         harfbuzz
         librsvg
         libsoup_3
-        pango
         webkitgtk_4_1
         openssl
         wasm-pack          
         lld
+
+        # debug tools
+        tree
       ];
-      
-      buildPhase = ''
-        ls
-        cargo build
-        ls
-      '';
 
       installPhase = ''
-        tree -L 3
+        dx clean
         dx bundle --platform web
-        tree -L 3
       '';
     };
 
