@@ -54,6 +54,7 @@
         dx clean
         dx bundle --platform web
       '';
+
     };
 
     nixosModule = { config, lib, pkgs, ... }: {
