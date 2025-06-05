@@ -1,6 +1,8 @@
-/*!
-Learn more about Rust for Windows here: <https://github.com/microsoft/windows-rs>
-*/
+//! Define COM interfaces to call or implement.
+//!
+//! Take a look at [macro@interface] for an example.
+//!
+//! Learn more about Rust for Windows here: <https://github.com/microsoft/windows-rs>
 
 use quote::quote;
 use syn::spanned::Spanned;
@@ -8,7 +10,9 @@ use syn::spanned::Spanned;
 /// Defines a COM interface to call or implement.
 ///
 /// # Example
-/// ```rust,ignore
+/// ```rust,no_run
+/// use windows_core::*;
+///
 /// #[interface("094d70d6-5202-44b8-abb8-43860da5aca2")]
 /// unsafe trait IValue: IUnknown {
 ///     fn GetValue(&self, value: *mut i32) -> HRESULT;
@@ -17,17 +21,15 @@ use syn::spanned::Spanned;
 /// #[implement(IValue)]
 /// struct Value(i32);
 ///
-/// impl IValue_Impl for Value {
+/// impl IValue_Impl for Value_Impl {
 ///     unsafe fn GetValue(&self, value: *mut i32) -> HRESULT {
 ///         *value = self.0;
 ///         HRESULT(0)
 ///     }
 /// }
 ///
-/// fn main() {
-///     let object: IValue = Value(123).into();
-///     // Call interface methods...
-/// }
+/// let object: IValue = Value(123).into();
+/// // Call interface methods...
 /// ```
 #[proc_macro_attribute]
 pub fn interface(
@@ -429,7 +431,7 @@ impl Interface {
         }
     }
 
-    /// Gets the parent trait constrait which is nothing if the parent is IUnknown
+    /// Gets the parent trait constraint which is nothing if the parent is IUnknown
     fn parent_trait_constraint(&self) -> proc_macro2::TokenStream {
         if let Some((ident, path)) = self.parent_path().split_last() {
             if ident != "IUnknown" {

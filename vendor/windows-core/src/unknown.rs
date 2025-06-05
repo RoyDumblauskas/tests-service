@@ -2,6 +2,8 @@ use super::*;
 use core::ffi::c_void;
 use core::ptr::NonNull;
 
+/// Base interface for all COM interfaces.
+///
 /// All COM interfaces (and thus WinRT classes and interfaces) implement
 /// [IUnknown](https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown)
 /// under the hood to provide reference-counted lifetime management as well as the ability
@@ -56,7 +58,7 @@ impl PartialEq for IUnknown {
         // be determined by querying for `IUnknown` explicitly and then comparing the
         // pointer values. This works since `QueryInterface` is required to return
         // the same pointer value for queries for `IUnknown`.
-        self.as_raw() == other.as_raw()
+        core::ptr::eq(self.as_raw(), other.as_raw())
             || self.cast::<IUnknown>().unwrap().0 == other.cast::<IUnknown>().unwrap().0
     }
 }
@@ -115,16 +117,6 @@ pub trait IUnknownImpl {
     /// Gets the trust level of the current object.
     unsafe fn GetTrustLevel(&self, value: *mut i32) -> HRESULT;
 
-    /// Given a reference to an inner type, returns a reference to the outer shared type.
-    ///
-    /// # Safety
-    ///
-    /// This function should only be called from methods that implement COM interfaces, i.e.
-    /// implementations of methods on `IFoo_Impl` traits.
-    // TODO: This can be made safe, if IFoo_Impl are moved to the Object_Impl types.
-    // That requires some substantial redesign, though.
-    unsafe fn from_inner_ref(inner: &Self::Impl) -> &Self;
-
     /// Gets a borrowed reference to an interface that is implemented by this ComObject.
     ///
     /// The returned reference does not have an additional reference count.
@@ -156,10 +148,6 @@ pub trait IUnknownImpl {
     fn to_object(&self) -> ComObject<Self::Impl>
     where
         Self::Impl: ComObjectInner<Outer = Self>;
-
-    /// The distance from the start of `<Foo>_Impl` to the `this` field within it, measured in
-    /// pointer-sized elements. The `this` field contains the `MyApp` instance.
-    const INNER_OFFSET_IN_POINTERS: usize;
 }
 
 impl IUnknown_Vtbl {
@@ -169,20 +157,26 @@ impl IUnknown_Vtbl {
             iid: *const GUID,
             interface: *mut *mut c_void,
         ) -> HRESULT {
-            let this = (this as *mut *mut c_void).offset(OFFSET) as *mut T;
-            (*this).QueryInterface(iid, interface)
+            unsafe {
+                let this = (this as *mut *mut c_void).offset(OFFSET) as *mut T;
+                (*this).QueryInterface(iid, interface)
+            }
         }
         unsafe extern "system" fn AddRef<T: IUnknownImpl, const OFFSET: isize>(
             this: *mut c_void,
         ) -> u32 {
-            let this = (this as *mut *mut c_void).offset(OFFSET) as *mut T;
-            (*this).AddRef()
+            unsafe {
+                let this = (this as *mut *mut c_void).offset(OFFSET) as *mut T;
+                (*this).AddRef()
+            }
         }
         unsafe extern "system" fn Release<T: IUnknownImpl, const OFFSET: isize>(
             this: *mut c_void,
         ) -> u32 {
-            let this = (this as *mut *mut c_void).offset(OFFSET) as *mut T;
-            T::Release(this)
+            unsafe {
+                let this = (this as *mut *mut c_void).offset(OFFSET) as *mut T;
+                T::Release(this)
+            }
         }
         Self {
             QueryInterface: QueryInterface::<T, OFFSET>,

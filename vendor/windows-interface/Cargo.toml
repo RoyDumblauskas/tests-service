@@ -11,11 +11,12 @@
 
 [package]
 edition = "2021"
-rust-version = "1.70"
+rust-version = "1.74"
 name = "windows-interface"
-version = "0.58.0"
+version = "0.59.1"
 authors = ["Microsoft"]
 build = false
+autolib = false
 autobins = false
 autoexamples = false
 autotests = false
@@ -36,9 +37,11 @@ proc-macro = true
 
 [dependencies.proc-macro2]
 version = "1.0"
+default-features = false
 
 [dependencies.quote]
 version = "1.0"
+default-features = false
 
 [dependencies.syn]
 version = "2.0"
@@ -47,13 +50,15 @@ features = [
     "proc-macro",
     "printing",
     "full",
-    "derive",
     "clone-impls",
 ]
 default-features = false
 
+[dev-dependencies]
+
 [lints.rust]
 missing_docs = "warn"
+unsafe_op_in_unsafe_fn = "warn"
 
 [lints.rust.rust_2018_idioms]
 level = "warn"

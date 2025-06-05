@@ -1,5 +1,3 @@
-#![allow(clippy::many_single_char_names)]
-
 pub const fn sha1(data: &ConstBuffer) -> Digest {
     let state: [u32; 5] = [0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476, 0xc3d2e1f0];
     let len: u64 = 0;
@@ -112,11 +110,11 @@ impl ConstBuffer {
             .push(b'-')
             .push_hex_u16(guid.data3)
             .push(b'-')
-            .push_hex_u16((guid.data4[0] as u16) << 8 | guid.data4[1] as u16)
+            .push_hex_u16(((guid.data4[0] as u16) << 8) | guid.data4[1] as u16)
             .push(b'-')
-            .push_hex_u16((guid.data4[2] as u16) << 8 | guid.data4[3] as u16)
-            .push_hex_u16((guid.data4[4] as u16) << 8 | guid.data4[5] as u16)
-            .push_hex_u16((guid.data4[6] as u16) << 8 | guid.data4[7] as u16)
+            .push_hex_u16(((guid.data4[2] as u16) << 8) | guid.data4[3] as u16)
+            .push_hex_u16(((guid.data4[4] as u16) << 8) | guid.data4[5] as u16)
+            .push_hex_u16(((guid.data4[6] as u16) << 8) | guid.data4[7] as u16)
             .push(b'}')
     }
 }
@@ -476,7 +474,7 @@ impl Digest {
 impl core::fmt::Display for Digest {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         for i in self.data.iter() {
-            write!(f, "{:08x}", i)?;
+            write!(f, "{i:08x}")?;
         }
         Ok(())
     }

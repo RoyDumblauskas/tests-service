@@ -1,13 +1,7 @@
-/*!
-Learn more about Rust for Windows here: <https://github.com/microsoft/windows-rs>
-*/
-
+#![doc = include_str!("../readme.md")]
 #![doc(html_no_source)]
 #![allow(non_snake_case)]
-#![cfg_attr(
-    windows_debugger_visualizer,
-    debugger_visualizer(natvis_file = "../.natvis")
-)]
+#![debugger_visualizer(natvis_file = "../windows-core.natvis")]
 #![cfg_attr(all(not(feature = "std")), no_std)]
 
 #[cfg(windows)]
