@@ -24,6 +24,7 @@
 
         pango
         cairo
+        lld
 
         # tauri deps
         pkg-config
@@ -42,8 +43,8 @@
         libsoup_3
         webkitgtk_4_1
         openssl
-        wasm-pack          
-        lld
+        wasm-pack      
+        xdotool
 
         # debug tools
         tree
