@@ -50,11 +50,17 @@
         tree
       ];
 
-      installPhase = ''
+      buildPhase = ''
         dx clean
         dx bundle --platform web
       '';
+      installPhase = ''
+        mkdir -p $out/bin
+        cp target/dx/tests-service/release/web/server $out/bin/tests-service
 
+        mkdir -p $out/public
+        cp -r target/dx/tests-service/release/web/public/* $out/public/
+      '';
     };
 
     nixosModule = { config, lib, pkgs, ... }: {
