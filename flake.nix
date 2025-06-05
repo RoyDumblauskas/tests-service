@@ -98,7 +98,7 @@
           wantedBy = ["multi-user.target"];
           after = ["network.target"];
           serviceConfig = {
-            ExecStart = "${dioxusApp}/bin/tests-service}";
+            ExecStart = "${dioxusApp}/bin/tests-service";
             Restart = "always";
             Type = "simple";
             DynamicUser = "yes";
