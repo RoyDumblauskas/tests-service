@@ -14,7 +14,7 @@
       version = "0.1.0";
       src = ./.;
 
-      cargoVendorDir = ./vendor;
+      cargoLock.lockFile = ./Cargo.lock;
 
       nativeBuildInputs = with pkgs; [
         dioxus-cli
