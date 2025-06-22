@@ -107,7 +107,7 @@
           environment = {
             PORT = toString config.services.tests-service.port;
             IP = "0.0.0.0";
-          };
+          }; 
         };
 
         services.nginx = lib.mkIf config.services.tests-service.default-nginx.enable {
