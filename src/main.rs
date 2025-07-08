@@ -28,7 +28,11 @@ fn App() -> Element {
 
     rsx! {
         document::Stylesheet { href: CSS }
-        Router::<Route> { }
+        div { id: "control",
+            div{ id: "wrap",
+                Router::<Route> { }
+            }
+        }
     }
 }
 

@@ -1,0 +1,36 @@
+#home {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+#projectList {
+  display: flex;
+  flex-direction: column;
+}
+
+#projectItem {
+  display: block;
+  padding: 1rem;
+  margin: 0.5rem 0;
+  background-color: #f5f5f5;
+  border-radius: 0.5rem;
+  border: 1px solid #ddd;
+  text-decoration: none;
+  color: #24292e; /* GitHub text color */
+
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+#projectItem:hover {
+  background-color: #eaeaea;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+#projectItem::before {
+  content: " ";
+  font-family: "Font Awesome 5 Free"; /* or similar icon font if you're using it */
+  font-weight: 900;
+}
+
