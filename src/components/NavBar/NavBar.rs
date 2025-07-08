@@ -7,7 +7,7 @@ static CSS: Asset = asset!("/assets/component-css/NavBar.css");
 pub fn NavBar() -> Element {
     rsx! { 
         document::Stylesheet { href: CSS }
-        div { id: "navbar", class: "navbar",
+        div { id: "navbar",
             Link {
                 to: Route::Home { },
                 "Home"
