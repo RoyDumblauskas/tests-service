@@ -1,0 +1,31 @@
+#navbar {
+  flex-direction: row;
+  justify-items: space-between;
+  justify-content: space-between;
+  align-content: space-between;
+  align-items: space-between;
+  gap: 100px;
+  padding: 15px;
+}
+
+#navbar.Link {
+  display: flex; 
+  padding: 0.5rem 1rem;
+  margin: 0 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+#navbar link:hover {
+  background-color: #f0f0f0;
+  color: #000;
+}
+
+#navbar.active {
+  background-color: #007bff;
+  color: #fff;
+}

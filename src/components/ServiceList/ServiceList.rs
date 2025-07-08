@@ -1,8 +1,11 @@
 use dioxus::prelude::*;
 
-static CSS: Asset = asset!("/src/components/ServiceList/ServiceList.css");
+static CSS: Asset = asset!("/assets/component-css/ServiceList.css");
 
 #[component]
 pub fn ServiceList() -> Element {
-    rsx! { h1 { "ServiceList" } }
+    rsx! {
+        document::Stylesheet { href: CSS }
+        h1 { "ServiceList" }
+    }
 }

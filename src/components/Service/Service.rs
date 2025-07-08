@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
 
-static CSS: Asset = asset!("/src/components/Service/Service.css");
+static CSS: Asset = asset!("/assets/component-css/Service.css");
 
 #[derive(Props, PartialEq, Clone)]
 struct Props {
@@ -9,5 +9,8 @@ struct Props {
 
 #[component]
 pub fn Service(name: String) -> Element {
-    rsx! { h1 { "Service: {name}" } }
+    rsx! {
+        document::Stylesheet { href: CSS }
+        h1 { "Service: {name}" }
+    }
 }

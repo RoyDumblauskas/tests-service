@@ -1,8 +1,23 @@
 use dioxus::prelude::*;
+use crate::Route;
 
-static CSS: Asset = asset!("/src/components/NavBar/NavBar.css");
+static CSS: Asset = asset!("/assets/component-css/NavBar.css");
 
 #[component]
 pub fn NavBar() -> Element {
-    rsx! { h1 { "text" } }
+    rsx! { 
+        document::Stylesheet { href: CSS }
+        div { id: "navbar", class: "navbar",
+            Link {
+                to: Route::Home { },
+                "Home"
+            }
+            Link {
+                to: Route::ServiceList { },
+                "Service List"
+            }
+        }
+        Outlet::<Route> { }
+    }
 }
+
