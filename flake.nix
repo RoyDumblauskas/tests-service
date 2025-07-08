@@ -67,8 +67,6 @@
 
       # skips check phase, I think
       checkPhase = ''
-        runHook preCheck
-        runHook postCheck
       '';
     };
 
