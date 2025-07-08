@@ -10,7 +10,6 @@
 #navbar a {
   display: flex; 
   padding: 8px;
-  color: #000;
   text-decoration: none;
   border-width: 2px;
   border-style: solid;
@@ -20,7 +19,16 @@
 }
 
 #navbar a:hover {
-  background-color: #f0f0f0;
+  background-color: #bbb;
   color: #000;
 }
 
+#selectedRoute {
+  background-color: #000;
+  color: #fff;
+}
+
+#unselectedRoute {
+  background-color: #fff;
+  color: #000;
+}
