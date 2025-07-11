@@ -30,7 +30,7 @@ pub fn Home() -> Element {
     Project {
         name: "Homelab Configuration".to_string(),
         repository: "https://github.com/RoyDumblauskas/homelab-config".to_string(),
-        desc: "".to_string(),
+        desc: "All configuration files for each node in Roy's homelab with flakes, home-manager, and sops-nix. This includes a bootstrap file for the first boot of a machine. The repository also includes the declarations for some homelab services which are not big enough to warrant their own repository (MC & Minio)".to_string(),
         priority: 1,
     },
     ];
@@ -57,8 +57,15 @@ struct ProjectElementPropsDef {
 fn ProjectElement(project: Project) -> Element {
     rsx! {
         a { id: "projectItem",
-        href: "{project.repository}",
-        "{project.name}"
+            href: "{project.repository}",
+            div { id: "link-title",
+                img { id: "gh-icon", src: GH_ICON }
+                h3 { id: "name", "{project.name}" }
+            }
+            div { id: "desc",
+                "{project.desc}"
+
+            }
         }
     }
 }
