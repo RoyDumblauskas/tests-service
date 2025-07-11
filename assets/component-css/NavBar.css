@@ -18,17 +18,22 @@
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-#navbar a:hover {
-  background-color: #bbb;
-  color: #000;
+#selectedRoute {
+  background-color: #000;
+  color: #fff;
 }
 
-#selectedRoute {
+#selectedRoute:hover {
   background-color: #000;
   color: #fff;
 }
 
 #unselectedRoute {
   background-color: #fff;
+  color: #000;
+}
+
+#unselectedRoute:hover {
+  background-color: #bbb;
   color: #000;
 }

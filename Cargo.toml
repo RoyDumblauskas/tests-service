@@ -11,6 +11,7 @@ dioxus = { version = "0.6.0", features = ["router", "fullstack"] }
 dioxus-liveview = { version = "^0.6.0-rc.0", optional = true }
 dioxus-ssr = { version = "^0.6.0-rc.0", optional = true }
 dioxus-isrg = { version = "^0.6.0-rc.0", optional = true }
+itertools = "0.14.0"
 
 [features]
 default = ["web"]
