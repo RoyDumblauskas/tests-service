@@ -18,7 +18,7 @@ pub fn Home() -> Element {
     Project {
         name: "Laptop Configuration".to_string(),
         repository: "https://github.com/RoyDumblauskas/laptop-config".to_string(),
-        desc: "Roy's personal laptop configuration with flakes, home-manager, and sops-nix! Not really a homelab service, but it's pretty cool I think.".to_string(),
+        desc: "Roy's personal laptop configuration with flakes, home-manager, and sops-nix! Not really a homelab service, but I think it's pretty cool.".to_string(),
         priority: 2,
     },
     Project {
