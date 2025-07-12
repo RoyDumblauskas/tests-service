@@ -79,9 +79,9 @@ cfg_net! {
     /// accessing the `RawFd`/`RawSocket` using [`AsRawFd`]/[`AsRawSocket`] and
     /// setting the option with a crate like [`socket2`].
     ///
-    /// [`RawFd`]: https://doc.rust-lang.org/std/os/unix/io/type.RawFd.html
+    /// [`RawFd`]: https://doc.rust-lang.org/std/os/fd/type.RawFd.html
     /// [`RawSocket`]: https://doc.rust-lang.org/std/os/windows/io/type.RawSocket.html
-    /// [`AsRawFd`]: https://doc.rust-lang.org/std/os/unix/io/trait.AsRawFd.html
+    /// [`AsRawFd`]: https://doc.rust-lang.org/std/os/fd/trait.AsRawFd.html
     /// [`AsRawSocket`]: https://doc.rust-lang.org/std/os/windows/io/trait.AsRawSocket.html
     /// [`socket2`]: https://docs.rs/socket2/
     #[cfg_attr(docsrs, doc(alias = "connect_std"))]
@@ -276,10 +276,20 @@ impl TcpSocket {
     ///     Ok(())
     /// }
     /// ```
-    #[cfg(all(unix, not(target_os = "solaris"), not(target_os = "illumos")))]
+    #[cfg(all(
+        unix,
+        not(target_os = "solaris"),
+        not(target_os = "illumos"),
+        not(target_os = "cygwin"),
+    ))]
     #[cfg_attr(
         docsrs,
-        doc(cfg(all(unix, not(target_os = "solaris"), not(target_os = "illumos"))))
+        doc(cfg(all(
+            unix,
+            not(target_os = "solaris"),
+            not(target_os = "illumos"),
+            not(target_os = "cygwin"),
+        )))
     )]
     pub fn set_reuseport(&self, reuseport: bool) -> io::Result<()> {
         self.inner.set_reuse_port(reuseport)
@@ -311,10 +321,20 @@ impl TcpSocket {
     ///     Ok(())
     /// }
     /// ```
-    #[cfg(all(unix, not(target_os = "solaris"), not(target_os = "illumos")))]
+    #[cfg(all(
+        unix,
+        not(target_os = "solaris"),
+        not(target_os = "illumos"),
+        not(target_os = "cygwin"),
+    ))]
     #[cfg_attr(
         docsrs,
-        doc(cfg(all(unix, not(target_os = "solaris"), not(target_os = "illumos"))))
+        doc(cfg(all(
+            unix,
+            not(target_os = "solaris"),
+            not(target_os = "illumos"),
+            not(target_os = "cygwin"),
+        )))
     )]
     pub fn reuseport(&self) -> io::Result<bool> {
         self.inner.reuse_port()
@@ -368,7 +388,7 @@ impl TcpSocket {
     ///
     /// Note that if [`set_recv_buffer_size`] has been called on this socket
     /// previously, the value returned by this function may not be the same as
-    /// the argument provided to `set_send_buffer_size`. This is for the
+    /// the argument provided to `set_recv_buffer_size`. This is for the
     /// following reasons:
     ///
     /// * Most operating systems have minimum and maximum allowed sizes for the

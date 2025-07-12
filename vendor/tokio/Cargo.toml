@@ -13,7 +13,7 @@
 edition = "2021"
 rust-version = "1.70"
 name = "tokio"
-version = "1.45.1"
+version = "1.46.1"
 authors = ["Tokio Contributors <team@tokio.rs>"]
 build = false
 autolib = false
@@ -781,6 +781,24 @@ version = "0.3.0"
 [target.'cfg(all(tokio_unstable, target_has_atomic = "64"))'.dev-dependencies.tracing-mock]
 version = "= 0.1.0-beta.1"
 
+[target.'cfg(all(tokio_uring, target_os = "linux"))'.dependencies.io-uring]
+version = "0.7.6"
+default-features = false
+
+[target.'cfg(all(tokio_uring, target_os = "linux"))'.dependencies.libc]
+version = "0.2.168"
+
+[target.'cfg(all(tokio_uring, target_os = "linux"))'.dependencies.mio]
+version = "1.0.1"
+features = [
+    "os-poll",
+    "os-ext",
+]
+default-features = false
+
+[target.'cfg(all(tokio_uring, target_os = "linux"))'.dependencies.slab]
+version = "0.4.9"
+
 [target."cfg(loom)".dev-dependencies.loom]
 version = "0.7"
 features = [
@@ -789,7 +807,7 @@ features = [
 ]
 
 [target.'cfg(not(all(target_family = "wasm", target_os = "unknown")))'.dev-dependencies.rand]
-version = "0.8.0"
+version = "0.9"
 
 [target.'cfg(not(target_family = "wasm"))'.dependencies.socket2]
 version = "0.5.5"
@@ -862,4 +880,6 @@ check-cfg = [
     "cfg(tokio_no_tuning_tests)",
     "cfg(tokio_taskdump)",
     "cfg(tokio_unstable)",
+    "cfg(tokio_uring)",
+    'cfg(target_os, values("cygwin"))',
 ]

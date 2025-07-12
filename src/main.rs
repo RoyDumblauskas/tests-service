@@ -20,7 +20,17 @@ pub enum Route {
 }
 
 fn main() {
+    #[cfg(feature = "web")]
     dioxus::launch(App);
+
+    #[cfg(feature = "server")]
+    {
+        tokio::runtime::Runtime::new()
+            .unwrap()
+            .block_on(async move {
+                launch_server(App).await;
+            });
+    }
 }
 
 #[component]
@@ -35,4 +45,3 @@ fn App() -> Element {
         }
     }
 }
-

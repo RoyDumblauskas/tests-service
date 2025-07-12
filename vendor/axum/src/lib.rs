@@ -46,7 +46,7 @@
 //!
 //! # Routing
 //!
-//! [`Router`] is used to set up which paths goes to which services:
+//! [`Router`] is used to set up which paths go to which services:
 //!
 //! ```rust
 //! use axum::{Router, routing::get};
@@ -148,10 +148,12 @@
 //! pool of database connections or clients to other services may need to
 //! be shared.
 //!
-//! The three most common ways of doing that are:
+//! The four most common ways of doing that are:
+//!
 //! - Using the [`State`] extractor
 //! - Using request extensions
 //! - Using closure captures
+//! - Using task-local variables
 //!
 //! ## Using the [`State`] extractor
 //!
@@ -182,13 +184,13 @@
 //! ```
 //!
 //! You should prefer using [`State`] if possible since it's more type safe. The downside is that
-//! it's less dynamic than request extensions.
+//! it's less dynamic than task-local variables and request extensions.
 //!
 //! See [`State`] for more details about accessing state.
 //!
 //! ## Using request extensions
 //!
-//! Another way to extract state in handlers is using [`Extension`](crate::extract::Extension) as
+//! Another way to share state with handlers is using [`Extension`](crate::extract::Extension) as
 //! layer and extractor:
 //!
 //! ```rust,no_run
@@ -251,7 +253,7 @@
 //!         }),
 //!     )
 //!     .route(
-//!         "/users/:id",
+//!         "/users/{id}",
 //!         get({
 //!             let shared_state = Arc::clone(&shared_state);
 //!             move |path| get_user(path, shared_state)
@@ -273,12 +275,11 @@
 //! # let _: Router = app;
 //! ```
 //!
-//! The downside to this approach is that it's a little more verbose than using
-//! [`State`] or extensions.
+//! The downside to this approach is that it's a the most verbose approach.
 //!
-//! ## Using [tokio's `task_local` macro](https://docs.rs/tokio/1/tokio/macro.task_local.html):
+//! ## Using task-local variables
 //!
-//! This allows to share state with `IntoResponse` implementations.
+//! This also allows to share state with `IntoResponse` implementations:
 //!
 //! ```rust,no_run
 //! use axum::{
@@ -336,6 +337,12 @@
 //!     .route("/", get(handler))
 //!     .route_layer(middleware::from_fn(auth));
 //! ```
+//!
+//! The main downside to this approach is that it only works when the async executor being used
+//! has the concept of task-local variables. The example above uses
+//! [tokio's `task_local` macro](https://docs.rs/tokio/1/tokio/macro.task_local.html).
+//! smol does not yet offer equivalent functionality at the time of writing (see
+//! [this GitHub issue](https://github.com/smol-rs/async-executor/issues/139)).
 //!
 //! # Building integrations for axum
 //!
@@ -420,42 +427,6 @@
 //! [`axum-core`]: http://crates.io/crates/axum-core
 //! [`State`]: crate::extract::State
 
-#![warn(
-    clippy::all,
-    clippy::todo,
-    clippy::empty_enum,
-    clippy::enum_glob_use,
-    clippy::mem_forget,
-    clippy::unused_self,
-    clippy::filter_map_next,
-    clippy::needless_continue,
-    clippy::needless_borrow,
-    clippy::match_wildcard_for_single_variants,
-    clippy::if_let_mutex,
-    clippy::await_holding_lock,
-    clippy::match_on_vec_items,
-    clippy::imprecise_flops,
-    clippy::suboptimal_flops,
-    clippy::lossy_float_literal,
-    clippy::rest_pat_in_fully_bound_structs,
-    clippy::fn_params_excessive_bools,
-    clippy::exit,
-    clippy::inefficient_to_string,
-    clippy::linkedlist,
-    clippy::macro_use_imports,
-    clippy::option_option,
-    clippy::verbose_file_reads,
-    clippy::unnested_or_patterns,
-    clippy::str_to_string,
-    rust_2018_idioms,
-    future_incompatible,
-    nonstandard_style,
-    missing_debug_implementations,
-    missing_docs
-)]
-#![deny(unreachable_pub)]
-#![allow(elided_lifetimes_in_paths, clippy::type_complexity)]
-#![forbid(unsafe_code)]
 #![cfg_attr(docsrs, feature(doc_auto_cfg, doc_cfg))]
 #![cfg_attr(test, allow(clippy::float_cmp))]
 #![cfg_attr(not(test), warn(clippy::print_stdout, clippy::dbg_macro))]
@@ -482,11 +453,10 @@ pub mod routing;
 #[cfg(all(feature = "tokio", any(feature = "http1", feature = "http2")))]
 pub mod serve;
 
-#[cfg(test)]
-mod test_helpers;
+#[cfg(any(test, feature = "__private"))]
+#[allow(missing_docs, missing_debug_implementations, clippy::print_stdout)]
+pub mod test_helpers;
 
-#[doc(no_inline)]
-pub use async_trait::async_trait;
 #[doc(no_inline)]
 pub use http;
 
