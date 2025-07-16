@@ -1,4 +1,5 @@
 use dioxus::prelude::*;
+use dotenv::dotenv;
 
 // Use components
 mod components;
@@ -22,6 +23,8 @@ pub enum Route {
 }
 
 fn main() {
+    dotenv().ok();
+
     #[cfg(feature = "web")]
     dioxus::launch(App);
 
@@ -37,7 +40,6 @@ fn main() {
 
 #[component]
 fn App() -> Element {
-
     rsx! {
         document::Stylesheet { href: CSS }
         div { id: "control",

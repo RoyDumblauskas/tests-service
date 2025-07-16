@@ -8,3 +8,5 @@
 
 # Ignore results of nix run and nix build
 result
+
+.env
