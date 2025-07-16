@@ -79,6 +79,11 @@
           default = 8080;
           description = "Port to listen on";
         };
+        
+        credentialsFile = lib.mkOption {
+          type = lib.types.path;
+          description = "Secret environment variables";
+        };
 
         default-nginx = {
           enable = lib.mkEnableOption "Enable nginx reverse proxy to direct to service";
@@ -101,6 +106,7 @@
             Type = "simple";
             DynamicUser = "yes";
             WorkingDirectory = "${dioxusApp}";
+            EnvironmentFile = "${config.services.tests-service.credentialsFile}";
           };
           environment = {
             PORT = toString config.services.tests-service.port;

@@ -15,6 +15,7 @@ itertools = "0.14.0"
 axum = { version = "0.7.9", optional = true }
 tokio = { version = "1.46.1", features = ["full"], optional = true }
 reqwest = { version = "0.12", features = ["json"], optional = true }
+dotenv = "0.15"
 
 [features]
 default = ["web"]
