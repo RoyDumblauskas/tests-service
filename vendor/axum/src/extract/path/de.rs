@@ -94,21 +94,7 @@ impl<'de> Deserializer<'de> for PathDeserializer<'de> {
                 .got(self.url_params.len())
                 .expected(1));
         }
-        let key = &self.url_params[0].0;
-        let value = &self.url_params[0].1;
-        visitor
-            .visit_borrowed_str(value)
-            .map_err(|e: PathDeserializationError| {
-                if let ErrorKind::Message(message) = &e.kind {
-                    PathDeserializationError::new(ErrorKind::DeserializeError {
-                        key: key.to_string(),
-                        value: value.as_str().to_owned(),
-                        message: message.to_owned(),
-                    })
-                } else {
-                    e
-                }
-            })
+        visitor.visit_borrowed_str(&self.url_params[0].1)
     }
 
     fn deserialize_unit<V>(self, visitor: V) -> Result<V::Value, Self::Error>
@@ -154,7 +140,7 @@ impl<'de> Deserializer<'de> for PathDeserializer<'de> {
     where
         V: Visitor<'de>,
     {
-        if self.url_params.len() != len {
+        if self.url_params.len() < len {
             return Err(PathDeserializationError::wrong_number_of_parameters()
                 .got(self.url_params.len())
                 .expected(len));
@@ -174,7 +160,7 @@ impl<'de> Deserializer<'de> for PathDeserializer<'de> {
     where
         V: Visitor<'de>,
     {
-        if self.url_params.len() != len {
+        if self.url_params.len() < len {
             return Err(PathDeserializationError::wrong_number_of_parameters()
                 .got(self.url_params.len())
                 .expected(len));
@@ -376,19 +362,7 @@ impl<'de> Deserializer<'de> for ValueDeserializer<'de> {
     where
         V: Visitor<'de>,
     {
-        visitor
-            .visit_borrowed_str(self.value)
-            .map_err(|e: PathDeserializationError| {
-                if let (ErrorKind::Message(message), Some(key)) = (&e.kind, self.key.as_ref()) {
-                    PathDeserializationError::new(ErrorKind::DeserializeError {
-                        key: key.key().to_owned(),
-                        value: self.value.as_str().to_owned(),
-                        message: message.to_owned(),
-                    })
-                } else {
-                    e
-                }
-            })
+        visitor.visit_borrowed_str(self.value)
     }
 
     fn deserialize_bytes<V>(self, visitor: V) -> Result<V::Value, Self::Error>
@@ -454,11 +428,9 @@ impl<'de> Deserializer<'de> for ValueDeserializer<'de> {
                     Some(KeyOrIdx::Idx { idx: _, key }) => {
                         return seed.deserialize(KeyDeserializer { key }).map(Some);
                     }
-                    Some(KeyOrIdx::Key(_)) => {
-                        return Err(PathDeserializationError::custom(
-                            "array types are not supported",
-                        ));
-                    }
+                    // `KeyOrIdx::Key` is only used when deserializing maps so `deserialize_seq`
+                    // wouldn't be called for that
+                    Some(KeyOrIdx::Key(_)) => unreachable!(),
                     None => {}
                 };
 
@@ -636,15 +608,6 @@ enum KeyOrIdx<'de> {
     Idx { idx: usize, key: &'de str },
 }
 
-impl<'de> KeyOrIdx<'de> {
-    fn key(&self) -> &'de str {
-        match &self {
-            Self::Key(key) => key,
-            Self::Idx { key, .. } => key,
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -811,6 +774,20 @@ mod tests {
     }
 
     #[test]
+    fn test_parse_tuple_ignoring_additional_fields() {
+        let url_params = create_url_params(vec![
+            ("a", "abc"),
+            ("b", "true"),
+            ("c", "1"),
+            ("d", "false"),
+        ]);
+        assert_eq!(
+            <(&str, bool, u32)>::deserialize(PathDeserializer::new(&url_params)).unwrap(),
+            ("abc", true, 1)
+        );
+    }
+
+    #[test]
     fn test_parse_map() {
         let url_params = create_url_params(vec![("a", "1"), ("b", "true"), ("c", "abc")]);
         assert_eq!(
@@ -834,18 +811,6 @@ mod tests {
                 .kind;
             assert_eq!(actual_error_kind, $expected_error_kind);
         };
-    }
-
-    #[test]
-    fn test_parse_tuple_too_many_fields() {
-        test_parse_error!(
-            vec![("a", "abc"), ("b", "true"), ("c", "1"), ("d", "false"),],
-            (&str, bool, u32),
-            ErrorKind::WrongNumberOfParameters {
-                got: 4,
-                expected: 3,
-            }
-        );
     }
 
     #[test]
@@ -960,19 +925,6 @@ mod tests {
             Vec<Vec<String>>,
             ErrorKind::UnsupportedType {
                 name: "alloc::vec::Vec<alloc::string::String>",
-            }
-        );
-    }
-
-    #[test]
-    fn test_deserialize_key_value() {
-        test_parse_error!(
-            vec![("id", "123123-123-123123")],
-            uuid::Uuid,
-            ErrorKind::DeserializeError {
-                key: "id".to_owned(),
-                value: "123123-123-123123".to_owned(),
-                message: "UUID parsing failed: invalid group count: expected 5, found 3".to_owned(),
             }
         );
     }

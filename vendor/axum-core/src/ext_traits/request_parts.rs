@@ -1,6 +1,6 @@
 use crate::extract::FromRequestParts;
+use futures_util::future::BoxFuture;
 use http::request::Parts;
-use std::future::Future;
 
 mod sealed {
     pub trait Sealed {}
@@ -21,6 +21,7 @@ pub trait RequestPartsExt: sealed::Sealed + Sized {
     ///     response::{Response, IntoResponse},
     ///     http::request::Parts,
     ///     RequestPartsExt,
+    ///     async_trait,
     /// };
     /// use std::collections::HashMap;
     ///
@@ -29,6 +30,7 @@ pub trait RequestPartsExt: sealed::Sealed + Sized {
     ///     query_params: HashMap<String, String>,
     /// }
     ///
+    /// #[async_trait]
     /// impl<S> FromRequestParts<S> for MyExtractor
     /// where
     ///     S: Send + Sync,
@@ -52,7 +54,7 @@ pub trait RequestPartsExt: sealed::Sealed + Sized {
     ///     }
     /// }
     /// ```
-    fn extract<E>(&mut self) -> impl Future<Output = Result<E, E::Rejection>> + Send
+    fn extract<E>(&mut self) -> BoxFuture<'_, Result<E, E::Rejection>>
     where
         E: FromRequestParts<()> + 'static;
 
@@ -68,12 +70,14 @@ pub trait RequestPartsExt: sealed::Sealed + Sized {
     ///     response::{Response, IntoResponse},
     ///     http::request::Parts,
     ///     RequestPartsExt,
+    ///     async_trait,
     /// };
     ///
     /// struct MyExtractor {
     ///     requires_state: RequiresState,
     /// }
     ///
+    /// #[async_trait]
     /// impl<S> FromRequestParts<S> for MyExtractor
     /// where
     ///     String: FromRef<S>,
@@ -93,6 +97,7 @@ pub trait RequestPartsExt: sealed::Sealed + Sized {
     /// struct RequiresState { /* ... */ }
     ///
     /// // some extractor that requires a `String` in the state
+    /// #[async_trait]
     /// impl<S> FromRequestParts<S> for RequiresState
     /// where
     ///     String: FromRef<S>,
@@ -108,14 +113,14 @@ pub trait RequestPartsExt: sealed::Sealed + Sized {
     fn extract_with_state<'a, E, S>(
         &'a mut self,
         state: &'a S,
-    ) -> impl Future<Output = Result<E, E::Rejection>> + Send + 'a
+    ) -> BoxFuture<'a, Result<E, E::Rejection>>
     where
         E: FromRequestParts<S> + 'static,
         S: Send + Sync;
 }
 
 impl RequestPartsExt for Parts {
-    fn extract<E>(&mut self) -> impl Future<Output = Result<E, E::Rejection>> + Send
+    fn extract<E>(&mut self) -> BoxFuture<'_, Result<E, E::Rejection>>
     where
         E: FromRequestParts<()> + 'static,
     {
@@ -125,7 +130,7 @@ impl RequestPartsExt for Parts {
     fn extract_with_state<'a, E, S>(
         &'a mut self,
         state: &'a S,
-    ) -> impl Future<Output = Result<E, E::Rejection>> + Send + 'a
+    ) -> BoxFuture<'a, Result<E, E::Rejection>>
     where
         E: FromRequestParts<S> + 'static,
         S: Send + Sync,
@@ -143,6 +148,7 @@ mod tests {
         ext_traits::tests::{RequiresState, State},
         extract::FromRef,
     };
+    use async_trait::async_trait;
     use http::{Method, Request};
 
     #[tokio::test]
@@ -175,6 +181,7 @@ mod tests {
         from_state: String,
     }
 
+    #[async_trait]
     impl<S> FromRequestParts<S> for WorksForCustomExtractor
     where
         S: Send + Sync,

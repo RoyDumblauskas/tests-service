@@ -1,5 +1,6 @@
 #![doc = include_str!("../docs/response.md")]
 
+use axum_core::body::Body;
 use http::{header, HeaderValue, StatusCode};
 
 mod redirect;
@@ -39,7 +40,7 @@ pub struct Html<T>(pub T);
 
 impl<T> IntoResponse for Html<T>
 where
-    T: IntoResponse,
+    T: Into<Body>,
 {
     fn into_response(self) -> Response {
         (
@@ -47,7 +48,7 @@ where
                 header::CONTENT_TYPE,
                 HeaderValue::from_static(mime::TEXT_HTML_UTF_8.as_ref()),
             )],
-            self.0,
+            self.0.into(),
         )
             .into_response()
     }

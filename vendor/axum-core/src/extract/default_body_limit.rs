@@ -66,8 +66,8 @@ use tower_layer::Layer;
 ///
 /// [`Body::poll_frame`]: http_body::Body::poll_frame
 /// [`Bytes`]: bytes::Bytes
-/// [`Json`]: https://docs.rs/axum/0.8/axum/struct.Json.html
-/// [`Form`]: https://docs.rs/axum/0.8/axum/struct.Form.html
+/// [`Json`]: https://docs.rs/axum/0.7/axum/struct.Json.html
+/// [`Form`]: https://docs.rs/axum/0.7/axum/struct.Form.html
 /// [`FromRequest`]: crate::extract::FromRequest
 /// [`RequestBodyLimit`]: tower_http::limit::RequestBodyLimit
 /// [`RequestExt::with_limited_body`]: crate::RequestExt::with_limited_body
@@ -103,6 +103,7 @@ impl DefaultBodyLimit {
     ///     extract::DefaultBodyLimit,
     /// };
     /// use tower_http::limit::RequestBodyLimitLayer;
+    /// use http_body_util::Limited;
     ///
     /// let app: Router<()> = Router::new()
     ///     .route("/", get(|body: Bytes| async {}))
@@ -113,8 +114,8 @@ impl DefaultBodyLimit {
     /// ```
     ///
     /// [`Bytes`]: bytes::Bytes
-    /// [`Json`]: https://docs.rs/axum/0.8/axum/struct.Json.html
-    /// [`Form`]: https://docs.rs/axum/0.8/axum/struct.Form.html
+    /// [`Json`]: https://docs.rs/axum/0.7/axum/struct.Json.html
+    /// [`Form`]: https://docs.rs/axum/0.7/axum/struct.Form.html
     pub const fn disable() -> Self {
         Self {
             kind: DefaultBodyLimitKind::Disable,
@@ -136,6 +137,8 @@ impl DefaultBodyLimit {
     ///     body::{Bytes, Body},
     ///     extract::DefaultBodyLimit,
     /// };
+    /// use tower_http::limit::RequestBodyLimitLayer;
+    /// use http_body_util::Limited;
     ///
     /// let app: Router<()> = Router::new()
     ///     .route("/", get(|body: Bytes| async {}))
@@ -144,8 +147,8 @@ impl DefaultBodyLimit {
     /// ```
     ///
     /// [`Bytes::from_request`]: bytes::Bytes
-    /// [`Json`]: https://docs.rs/axum/0.8/axum/struct.Json.html
-    /// [`Form`]: https://docs.rs/axum/0.8/axum/struct.Form.html
+    /// [`Json`]: https://docs.rs/axum/0.7/axum/struct.Json.html
+    /// [`Form`]: https://docs.rs/axum/0.7/axum/struct.Form.html
     pub const fn max(limit: usize) -> Self {
         Self {
             kind: DefaultBodyLimitKind::Limit(limit),

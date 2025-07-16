@@ -1,5 +1,3 @@
-#![allow(missing_docs)]
-
 use axum::{
     extract::State,
     routing::{get, post},
@@ -172,7 +170,7 @@ impl BenchmarkBuilder {
         cmd.stdout(Stdio::piped());
 
         cmd.arg("--host");
-        cmd.arg(format!("http://{addr}{}", self.path.unwrap_or("")));
+        cmd.arg(format!("http://{}{}", addr, self.path.unwrap_or("")));
 
         cmd.args(["--connections", "10"]);
         cmd.args(["--threads", "10"]);

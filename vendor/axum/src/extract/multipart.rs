@@ -4,6 +4,7 @@
 
 use super::{FromRequest, Request};
 use crate::body::Bytes;
+use async_trait::async_trait;
 use axum_core::{
     __composite_rejection as composite_rejection, __define_rejection as define_rejection,
     response::{IntoResponse, Response},
@@ -64,6 +65,7 @@ pub struct Multipart {
     inner: multer::Multipart<'static>,
 }
 
+#[async_trait]
 impl<S> FromRequest<S> for Multipart
 where
     S: Send + Sync,
@@ -117,7 +119,7 @@ impl Stream for Field<'_> {
     }
 }
 
-impl Field<'_> {
+impl<'a> Field<'a> {
     /// The field name found in the
     /// [`Content-Disposition`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition)
     /// header.

@@ -1,8 +1,10 @@
 use super::{serve, Request, Response};
 use bytes::Bytes;
 use futures_util::future::BoxFuture;
-use http::header::{HeaderName, HeaderValue};
-use std::ops::Deref;
+use http::{
+    header::{HeaderName, HeaderValue},
+    StatusCode,
+};
 use std::{convert::Infallible, future::IntoFuture, net::SocketAddr};
 use tokio::net::TcpListener;
 use tower::make::Shared;
@@ -29,13 +31,13 @@ where
     addr
 }
 
-pub struct TestClient {
+pub(crate) struct TestClient {
     client: reqwest::Client,
     addr: SocketAddr,
 }
 
 impl TestClient {
-    pub fn new<S>(svc: S) -> Self
+    pub(crate) fn new<S>(svc: S) -> Self
     where
         S: Service<Request, Response = Response, Error = Infallible> + Clone + Send + 'static,
         S::Future: Send,
@@ -50,55 +52,50 @@ impl TestClient {
         TestClient { client, addr }
     }
 
-    pub fn get(&self, url: &str) -> RequestBuilder {
+    pub(crate) fn get(&self, url: &str) -> RequestBuilder {
         RequestBuilder {
-            builder: self.client.get(format!("http://{}{url}", self.addr)),
+            builder: self.client.get(format!("http://{}{}", self.addr, url)),
         }
     }
 
-    pub fn head(&self, url: &str) -> RequestBuilder {
+    pub(crate) fn head(&self, url: &str) -> RequestBuilder {
         RequestBuilder {
-            builder: self.client.head(format!("http://{}{url}", self.addr)),
+            builder: self.client.head(format!("http://{}{}", self.addr, url)),
         }
     }
 
-    pub fn post(&self, url: &str) -> RequestBuilder {
+    pub(crate) fn post(&self, url: &str) -> RequestBuilder {
         RequestBuilder {
-            builder: self.client.post(format!("http://{}{url}", self.addr)),
-        }
-    }
-
-    #[allow(dead_code)]
-    pub fn put(&self, url: &str) -> RequestBuilder {
-        RequestBuilder {
-            builder: self.client.put(format!("http://{}{url}", self.addr)),
+            builder: self.client.post(format!("http://{}{}", self.addr, url)),
         }
     }
 
     #[allow(dead_code)]
-    pub fn patch(&self, url: &str) -> RequestBuilder {
+    pub(crate) fn put(&self, url: &str) -> RequestBuilder {
         RequestBuilder {
-            builder: self.client.patch(format!("http://{}{url}", self.addr)),
+            builder: self.client.put(format!("http://{}{}", self.addr, url)),
         }
     }
 
     #[allow(dead_code)]
-    pub fn server_port(&self) -> u16 {
-        self.addr.port()
+    pub(crate) fn patch(&self, url: &str) -> RequestBuilder {
+        RequestBuilder {
+            builder: self.client.patch(format!("http://{}{}", self.addr, url)),
+        }
     }
 }
 
-pub struct RequestBuilder {
+pub(crate) struct RequestBuilder {
     builder: reqwest::RequestBuilder,
 }
 
 impl RequestBuilder {
-    pub fn body(mut self, body: impl Into<reqwest::Body>) -> Self {
+    pub(crate) fn body(mut self, body: impl Into<reqwest::Body>) -> Self {
         self.builder = self.builder.body(body);
         self
     }
 
-    pub fn json<T>(mut self, json: &T) -> Self
+    pub(crate) fn json<T>(mut self, json: &T) -> Self
     where
         T: serde::Serialize,
     {
@@ -106,7 +103,7 @@ impl RequestBuilder {
         self
     }
 
-    pub fn header<K, V>(mut self, key: K, value: V) -> Self
+    pub(crate) fn header<K, V>(mut self, key: K, value: V) -> Self
     where
         HeaderName: TryFrom<K>,
         <HeaderName as TryFrom<K>>::Error: Into<http::Error>,
@@ -118,7 +115,7 @@ impl RequestBuilder {
     }
 
     #[allow(dead_code)]
-    pub fn multipart(mut self, form: reqwest::multipart::Form) -> Self {
+    pub(crate) fn multipart(mut self, form: reqwest::multipart::Form) -> Self {
         self.builder = self.builder.multipart(form);
         self
     }
@@ -138,41 +135,41 @@ impl IntoFuture for RequestBuilder {
 }
 
 #[derive(Debug)]
-pub struct TestResponse {
+pub(crate) struct TestResponse {
     response: reqwest::Response,
-}
-
-impl Deref for TestResponse {
-    type Target = reqwest::Response;
-
-    fn deref(&self) -> &Self::Target {
-        &self.response
-    }
 }
 
 impl TestResponse {
     #[allow(dead_code)]
-    pub async fn bytes(self) -> Bytes {
+    pub(crate) async fn bytes(self) -> Bytes {
         self.response.bytes().await.unwrap()
     }
 
-    pub async fn text(self) -> String {
+    pub(crate) async fn text(self) -> String {
         self.response.text().await.unwrap()
     }
 
     #[allow(dead_code)]
-    pub async fn json<T>(self) -> T
+    pub(crate) async fn json<T>(self) -> T
     where
         T: serde::de::DeserializeOwned,
     {
         self.response.json().await.unwrap()
     }
 
-    pub async fn chunk(&mut self) -> Option<Bytes> {
+    pub(crate) fn status(&self) -> StatusCode {
+        StatusCode::from_u16(self.response.status().as_u16()).unwrap()
+    }
+
+    pub(crate) fn headers(&self) -> http::HeaderMap {
+        self.response.headers().clone()
+    }
+
+    pub(crate) async fn chunk(&mut self) -> Option<Bytes> {
         self.response.chunk().await.unwrap()
     }
 
-    pub async fn chunk_text(&mut self) -> Option<String> {
+    pub(crate) async fn chunk_text(&mut self) -> Option<String> {
         let chunk = self.chunk().await?;
         Some(String::from_utf8(chunk.to_vec()).unwrap())
     }

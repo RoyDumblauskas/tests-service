@@ -1,4 +1,3 @@
-use crate::escape::{UnescapedRef, UnescapedRoute};
 use crate::tree::{denormalize_params, Node};
 
 use std::fmt;
@@ -13,14 +12,9 @@ pub enum InsertError {
         with: String,
     },
     /// Only one parameter per route segment is allowed.
-    ///
-    /// Static segments are also allowed before a parameter, but not after it. For example,
-    /// `/foo-{bar}` is a valid route, but `/{bar}-foo` is not.
-    InvalidParamSegment,
-    /// Parameters must be registered with a valid name and matching braces.
-    ///
-    /// Note you can use `{{` or `}}` to escape literal brackets.
-    InvalidParam,
+    TooManyParams,
+    /// Parameters must be registered with a name.
+    UnnamedParam,
     /// Catch-all parameters are only allowed at the end of a path.
     InvalidCatchAll,
 }
@@ -31,17 +25,15 @@ impl fmt::Display for InsertError {
             Self::Conflict { with } => {
                 write!(
                     f,
-                    "Insertion failed due to conflict with previously registered route: {}",
+                    "insertion failed due to conflict with previously registered route: {}",
                     with
                 )
             }
-            Self::InvalidParamSegment => {
-                write!(f, "Only one parameter is allowed per path segment")
-            }
-            Self::InvalidParam => write!(f, "Parameters must be registered with a valid name"),
+            Self::TooManyParams => write!(f, "only one parameter is allowed per path segment"),
+            Self::UnnamedParam => write!(f, "parameters must be registered with a name"),
             Self::InvalidCatchAll => write!(
                 f,
-                "Catch-all parameters are only allowed at the end of a route"
+                "catch-all parameters are only allowed at the end of a route"
             ),
         }
     }
@@ -50,49 +42,28 @@ impl fmt::Display for InsertError {
 impl std::error::Error for InsertError {}
 
 impl InsertError {
-    /// Returns an error for a route conflict with the given node.
-    ///
-    /// This method attempts to find the full conflicting route.
-    pub(crate) fn conflict<T>(
-        route: &UnescapedRoute,
-        prefix: UnescapedRef<'_>,
-        current: &Node<T>,
-    ) -> Self {
-        let mut route = route.clone();
+    pub(crate) fn conflict<T>(route: &[u8], prefix: &[u8], current: &Node<T>) -> Self {
+        let mut route = route[..route.len() - prefix.len()].to_owned();
 
-        // The route is conflicting with the current node.
-        if prefix.unescaped() == current.prefix.unescaped() {
-            denormalize_params(&mut route, &current.remapping);
-            return InsertError::Conflict {
-                with: String::from_utf8(route.into_unescaped()).unwrap(),
-            };
-        }
-
-        // Remove the non-matching suffix from the route.
-        route.truncate(route.len() - prefix.len());
-
-        // Add the conflicting prefix.
         if !route.ends_with(&current.prefix) {
-            route.append(&current.prefix);
+            route.extend_from_slice(&current.prefix);
         }
 
-        // Add the prefixes of any conflicting children.
-        let mut child = current.children.first();
-        while let Some(node) = child {
-            route.append(&node.prefix);
-            child = node.children.first();
-        }
-
-        // Denormalize any route parameters.
         let mut last = current;
         while let Some(node) = last.children.first() {
             last = node;
         }
-        denormalize_params(&mut route, &last.remapping);
 
-        // Return the conflicting route.
+        let mut current = current.children.first();
+        while let Some(node) = current {
+            route.extend_from_slice(&node.prefix);
+            current = node.children.first();
+        }
+
+        denormalize_params(&mut route, &last.param_remapping);
+
         InsertError::Conflict {
-            with: String::from_utf8(route.into_unescaped()).unwrap(),
+            with: String::from_utf8(route).unwrap(),
         }
     }
 }
@@ -104,23 +75,53 @@ impl InsertError {
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// let mut router = Router::new();
 /// router.insert("/home", "Welcome!")?;
-/// router.insert("/blog", "Our blog.")?;
+/// router.insert("/blog/", "Our blog.")?;
+///
+/// // a route exists without the trailing slash
+/// if let Err(err) = router.at("/home/") {
+///     assert_eq!(err, MatchError::ExtraTrailingSlash);
+/// }
+///
+/// // a route exists with a trailing slash
+/// if let Err(err) = router.at("/blog") {
+///     assert_eq!(err, MatchError::MissingTrailingSlash);
+/// }
 ///
 /// // no routes match
-/// if let Err(err) = router.at("/blo") {
+/// if let Err(err) = router.at("/foobar") {
 ///     assert_eq!(err, MatchError::NotFound);
 /// }
 /// # Ok(())
 /// # }
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum MatchError {
+    /// The path was missing a trailing slash.
+    MissingTrailingSlash,
+    /// The path had an extra trailing slash.
+    ExtraTrailingSlash,
     /// No matching route was found.
     NotFound,
 }
 
+impl MatchError {
+    pub(crate) fn unsure(full_path: &[u8]) -> Self {
+        if full_path[full_path.len() - 1] == b'/' {
+            MatchError::ExtraTrailingSlash
+        } else {
+            MatchError::MissingTrailingSlash
+        }
+    }
+}
+
 impl fmt::Display for MatchError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Matching route not found")
+        let msg = match self {
+            MatchError::MissingTrailingSlash => "match error: expected trailing slash",
+            MatchError::ExtraTrailingSlash => "match error: found extra trailing slash",
+            MatchError::NotFound => "match error: route not found",
+        };
+
+        write!(f, "{}", msg)
     }
 }
 

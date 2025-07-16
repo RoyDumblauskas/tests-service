@@ -1,13 +1,7 @@
 use dioxus::prelude::*;
 
-#[cfg(feature = "server")]
-use axum::Router;
-
-
-
 // Use components
 mod components;
-
 use crate::components::*;
 
 static CSS: Asset = asset!("/assets/main.css");
@@ -25,7 +19,6 @@ pub enum Route {
 }
 
 fn main() {
-    #[cfg(feature = "web")]
     dioxus::launch(App);
 
     #[cfg(feature = "server")]
@@ -33,7 +26,7 @@ fn main() {
         tokio::runtime::Runtime::new()
             .unwrap()
             .block_on(async move {
-                launch_server(App).await;
+                launch_server().await;
             });
     }
 }
@@ -52,7 +45,7 @@ fn App() -> Element {
 }
 
 #[cfg(feature = "server")]
-async fn launch_server(component: fn() -> Element) {
+async fn launch_server() {
     use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 
     // Get the address the server should run on. If the CLI is running, the CLI proxies fullstack into the main address
