@@ -16,7 +16,7 @@ axum = { version = "0.8.4", optional = true }
 tokio = { version = "1.46.1", features = ["full"], optional = true }
 
 [features]
-default = ["web"]
+default = ["web", "server"]
 web = ["dioxus/web"]
 desktop = ["dioxus/desktop"]
 mobile = ["dioxus/mobile"]
