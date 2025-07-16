@@ -4,6 +4,10 @@ use dioxus::prelude::*;
 mod components;
 use crate::components::*;
 
+// Use server functions
+mod server;
+use crate::server::*;
+
 static CSS: Asset = asset!("/assets/main.css");
 
 #[derive(Debug, Clone, Routable, PartialEq)]
@@ -61,4 +65,5 @@ async fn launch_server() {
         .into_make_service();
     axum::serve(listener, router).await.unwrap();
 }
+
 
