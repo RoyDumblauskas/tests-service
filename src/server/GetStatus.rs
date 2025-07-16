@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
 
-#[server(GetStatus)]
-pub async fn get_status(input: String) -> Result<String, ServerFnError> {
-   Ok(input) 
+#[server]
+pub async fn get_status(url: String) -> Result<String, ServerFnError> {
+   Ok(url) 
 }
