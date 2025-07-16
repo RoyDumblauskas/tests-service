@@ -4,9 +4,8 @@ use dioxus::prelude::*;
 mod components;
 use crate::components::*;
 
-// Use server functions
+// Declare server functions
 mod server;
-use crate::server::*;
 
 static CSS: Asset = asset!("/assets/main.css");
 
