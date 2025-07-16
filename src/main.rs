@@ -19,6 +19,7 @@ pub enum Route {
 }
 
 fn main() {
+    #[cfg(feature = "web")]
     dioxus::launch(App);
 
     #[cfg(feature = "server")]
@@ -50,8 +51,7 @@ async fn launch_server() {
 
     // Get the address the server should run on. If the CLI is running, the CLI proxies fullstack into the main address
     // and we use the generated address the CLI gives us
-    let ip =
-        dioxus::cli_config::server_ip().unwrap_or_else(|| IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)));
+    let ip = dioxus::cli_config::server_ip().unwrap_or_else(|| IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)));
     let port = dioxus::cli_config::server_port().unwrap_or(8080);
     let address = SocketAddr::new(ip, port);
     let listener = tokio::net::TcpListener::bind(address).await.unwrap();
