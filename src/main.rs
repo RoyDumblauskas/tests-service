@@ -1,5 +1,4 @@
 use dioxus::prelude::*;
-use dotenv::dotenv;
 
 // Use components
 mod components;
@@ -23,8 +22,6 @@ pub enum Route {
 }
 
 fn main() {
-    dotenv().ok();
-
     #[cfg(feature = "web")]
     dioxus::launch(App);
 
@@ -41,6 +38,8 @@ fn main() {
 #[component]
 fn App() -> Element {
     rsx! {
+        document::Link { rel: "icon", href: asset!("/assets/favicon.ico") }
+        document::Title { "Homelab Status" }
         document::Stylesheet { href: CSS }
         div { id: "control",
             div{ id: "wrap",

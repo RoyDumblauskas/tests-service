@@ -1,12 +1,9 @@
 [application]
 
-asset_dir = "assets"
-
 [web.app]
 
 # HTML title tag content
-title = "tests-service"
-assets = "assets"
+title = "Homelab Status"
 
 # include `assets` in web platform
 [web.resource]
