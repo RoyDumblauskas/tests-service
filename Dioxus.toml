@@ -1,9 +1,12 @@
 [application]
 
+asset_dir = "assets"
+
 [web.app]
 
 # HTML title tag content
 title = "tests-service"
+assets = "assets"
 
 # include `assets` in web platform
 [web.resource]

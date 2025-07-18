@@ -34,7 +34,6 @@ pub fn Home() -> Element {
         priority: 0,
     },
     ];
-
     rsx! { 
         document::Stylesheet { href: CSS }
         div { id: "home",
