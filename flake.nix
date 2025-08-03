@@ -102,7 +102,7 @@
             Type = "simple";
             DynamicUser = "yes";
             WorkingDirectory = "${dioxusApp}";
-            # EnvironmentFile = "${config.services.tests-service.credentialsFile}";
+            EnvironmentFile = "${config.services.tests-service.credentialsFile}";
           };
           environment = {
             PORT = toString config.services.tests-service.port;
