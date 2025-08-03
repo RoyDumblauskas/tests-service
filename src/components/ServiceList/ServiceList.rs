@@ -1,5 +1,5 @@
 use dioxus::prelude::*;
-use crate::server::*;
+use crate::server::get_status;
 
 static CSS: Asset = asset!("/assets/component-css/ServiceList.css");
 
