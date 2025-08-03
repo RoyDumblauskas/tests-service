@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -a
-source .env
+source src/.env
 set +a
 dx serve
 
