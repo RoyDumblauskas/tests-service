@@ -64,10 +64,6 @@
 
         runHook postInstall
       '';
-
-      # skips check phase, I think
-      checkPhase = ''
-      '';
     };
 
     nixosModule = { config, lib, pkgs, ... }: {
@@ -122,6 +118,9 @@
             acmeRoot = null;
             locations."/" = {
               proxyPass = "http://localhost:${toString config.services.tests-service.port}";
+            };
+            locations."/status" = {
+              # expose status of app
             };
           };
         };
