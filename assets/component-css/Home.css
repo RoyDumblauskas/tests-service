@@ -4,6 +4,10 @@
   flex: 1;
 }
 
+h2 {
+  align-self: center;
+}
+
 #projectList {
   display: flex;
   flex-direction: column;

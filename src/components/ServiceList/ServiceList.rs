@@ -11,7 +11,7 @@ pub fn ServiceList() -> Element {
     rsx! {
         document::Stylesheet { href: CSS }
         div {
-            h1 { "ServiceList" }
+            h2 { "Service List" }
             ServiceComponent { textField: textField, resp: resp }
         }
     }
@@ -20,7 +20,7 @@ pub fn ServiceList() -> Element {
 #[component]
 fn ServiceComponent(textField: Signal<String>, resp: Signal<String>) -> Element {
     rsx! {
-        div {
+        div { id: "container",
             h1 { "{resp.clone()}" }
             input {
                 placeholder: "input request url...",
