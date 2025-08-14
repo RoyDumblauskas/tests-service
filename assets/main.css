@@ -10,3 +10,7 @@
   display: flex;
   justify-content: center;
 }
+
+html, body {
+  font-family: 'Mononoki Nerd Font', monospace;
+}
