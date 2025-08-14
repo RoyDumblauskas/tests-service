@@ -12,34 +12,65 @@
 }
 
 html, body {
-  font-family: 'Mononoki Nerd Font', monospace;
+  font-family: 'Ubuntu Sans', sans-serif;
 }
+
+/* Mononoki */
 
 @font-face {
     font-family: 'Mononoki Nerd Font Mono';
-    src: url('../fonts/MononokiNFM-Regular.woff2') format('woff2');
+    src: url('fonts/MononokiNFM-Regular.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Mononoki Nerd Font Mono';
-    src: url('../fonts/MononokiNFM-Italic.woff2') format('woff2');
+    src: url('fonts/MononokiNFM-Italic.woff2') format('woff2');
     font-weight: normal;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'Mononoki Nerd Font Mono';
-    src: url('../fonts/MononokiNFM-Bold.woff2') format('woff2');
+    src: url('fonts/MononokiNFM-Bold.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Mononoki Nerd Font Mono';
-    src: url('../fonts/MononokiNFM-BoldItalic.woff2') format('woff2');
+    src: url('fonts/MononokiNFM-BoldItalic.woff2') format('woff2');
     font-weight: normal;
     font-style: italic;
 }
 
+/* Ubuntu Sans */
+
+@font-face {
+    font-family: 'Ubuntu Sans';
+    src: url('fonts/UbuntuSans-Regular.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Ubuntu Sans';
+    src: url('fonts/UbuntuSans-Italic.woff2') format('woff2');
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Ubuntu Sans';
+    src: url('fonts/UbuntuSans-Bold.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Ubuntu Sans';
+    src: url('fonts/UbuntuSans-BoldItalic.woff2') format('woff2');
+    font-weight: normal;
+    font-style: italic;
+}
