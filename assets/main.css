@@ -14,3 +14,32 @@
 html, body {
   font-family: 'Mononoki Nerd Font', monospace;
 }
+
+@font-face {
+    font-family: 'Mononoki Nerd Font Mono';
+    src: url('../fonts/MononokiNFM-Regular.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Mononoki Nerd Font Mono';
+    src: url('../fonts/MononokiNFM-Italic.woff2') format('woff2');
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Mononoki Nerd Font Mono';
+    src: url('../fonts/MononokiNFM-Bold.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Mononoki Nerd Font Mono';
+    src: url('../fonts/MononokiNFM-BoldItalic.woff2') format('woff2');
+    font-weight: normal;
+    font-style: italic;
+}
+
