@@ -10,10 +10,17 @@
 # See Cargo.toml.orig for the original contents.
 
 [package]
-rust-version = "1.40.0"
+edition = "2015"
+rust-version = "1.56.0"
 name = "libloading"
-version = "0.7.4"
+version = "0.8.8"
 authors = ["Simonas Kazlauskas <libloading@kazlauskas.me>"]
+build = false
+autolib = false
+autobins = false
+autoexamples = false
+autotests = false
+autobenches = false
 description = "Bindings around the platform's dynamic library loading primitives with greatly improved memory safety."
 documentation = "https://docs.rs/libloading/"
 readme = "README.mkd"
@@ -34,6 +41,30 @@ rustdoc-args = [
     "libloading_docs",
 ]
 
+[lib]
+name = "libloading"
+path = "src/lib.rs"
+
+[[test]]
+name = "constants"
+path = "tests/constants.rs"
+
+[[test]]
+name = "functions"
+path = "tests/functions.rs"
+
+[[test]]
+name = "library_filename"
+path = "tests/library_filename.rs"
+
+[[test]]
+name = "markers"
+path = "tests/markers.rs"
+
+[[test]]
+name = "windows"
+path = "tests/windows.rs"
+
 [dev-dependencies.libc]
 version = "0.2"
 
@@ -43,9 +74,17 @@ version = "1.1"
 [target."cfg(unix)".dependencies.cfg-if]
 version = "1"
 
-[target."cfg(windows)".dependencies.winapi]
-version = "0.3"
-features = [
-    "errhandlingapi",
-    "libloaderapi",
+[target."cfg(windows)".dependencies.windows-targets]
+version = ">=0.48, <0.54"
+
+[target."cfg(windows)".dev-dependencies.windows-sys]
+version = ">=0.52,<0.60"
+features = ["Win32_Foundation"]
+
+[lints.rust.unexpected_cfgs]
+level = "warn"
+priority = 0
+check-cfg = [
+    "cfg(libloading_docs)",
+    'cfg(target_os, values("cygwin"))',
 ]

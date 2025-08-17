@@ -1,5 +1,5 @@
 //! Keychain support.
-
+use core_foundation::{declare_TCFType, impl_TCFType};
 use core_foundation::base::{Boolean, TCFType};
 use security_framework_sys::base::{errSecSuccess, SecKeychainRef};
 use security_framework_sys::keychain::*;
@@ -222,11 +222,11 @@ impl KeychainSettings {
             Some(lock_interval) => {
                 self.0.useLockInterval = 1;
                 self.0.lockInterval = lock_interval;
-            }
+            },
             None => {
                 self.0.useLockInterval = 0;
                 self.0.lockInterval = i32::max_value() as u32;
-            }
+            },
         }
     }
 }

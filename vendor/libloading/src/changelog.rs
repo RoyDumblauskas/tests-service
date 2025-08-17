@@ -1,5 +1,71 @@
 //! The change log.
 
+/// Release 0.8.8 (2025-05-27)
+///
+/// ## Non-breaking changes
+///
+/// Add `os::window::Library::pin`.
+pub mod r0_8_8 {}
+
+/// Release 0.8.7 (2025-04-26)
+///
+/// ## Non-breaking changes
+///
+/// Add support for the `*-pc-cygwin` target.
+pub mod r0_8_7 {}
+
+/// Release 0.8.4 (2024-06-23)
+///
+/// ## Non-breaking changes
+///
+/// Compilation when targeting Apple's visionos, watchos and tvos targets has been fixed.
+pub mod r0_8_4 {}
+
+/// Release 0.8.3 (2024-03-05)
+///
+/// ## Non-breaking changes
+///
+/// A `dev-dependency` on `windows-sys` that was unconditionally introduced in
+/// [0.8.2](r0_8_2) has been made conditional.
+pub mod r0_8_3 {}
+
+/// Release 0.8.2 (2024-03-01)
+///
+/// ## (Potentially) breaking changes
+///
+/// MSRV has been increased to 1.56.0. Since both rustc versions are ancient, this has been deemed
+/// to not be breaking enough to warrant a semver-breaking release of libloading. If you're stick
+/// with a version of rustc older than 1.56.0, lock `libloading` dependency to `0.8.1`.
+///
+/// ## Non-breaking changes
+///
+/// * The crate switches the dependency on `windows-sys` to a `windows-target` one for Windows
+///   bindings. In order to enable this `libloading` defines any bindings necessary for its operation
+///   internally, just like has been done for `unix` targets. This should result in leaner dependency
+///   trees.
+/// * `os::unix::with_dlerror` has been exposed for the users who need to invoke `dl*` family of
+///   functions manually.
+pub mod r0_8_2 {}
+
+/// Release 0.8.1 (2023-09-30)
+///
+/// ## Non-breaking changes
+///
+/// * Support for GNU Hurd.
+pub mod r0_8_1 {}
+
+/// Release 0.8.0 (2023-04-11)
+///
+/// ## (Potentially) breaking changes
+///
+/// * `winapi` dependency has been replaced with `windows-sys`.
+/// * As a result the MSRV has been increased to 1.48.
+///
+/// ## Non-breaking changes
+///
+/// * Support for the QNX Neutrino target has been added.
+pub mod r0_8_0 {}
+
 /// Release 0.7.4 (2022-11-07)
 ///
 /// This release has no functional changes.
@@ -79,7 +145,7 @@ pub mod r0_7_1 {}
 /// Various executable and shared library formats define conventions and machinery to execute
 /// arbitrary code when a program or a shared library is loaded. On systems using the PE format
 /// (e.g. Windows) this is available via the optional `DllMain` initializer. Various systems
-/// utilizing the ELF format take a sightly different approach of maintaining an array of function
+/// utilizing the ELF format take a slightly different approach of maintaining an array of function
 /// pointers in the `.init_array` section. A very similar mechanism exists on systems that utilize
 /// the Mach-O format.
 ///
@@ -149,9 +215,9 @@ pub mod r0_7_0 {}
 /// Release 0.6.7 (2021-01-14)
 ///
 /// * Added a [`os::windows::Library::open_already_loaded`] to obtain a handle to a library that
-/// must already be loaded. There is no portable equivalent for all UNIX targets. Users who do not
-/// care about portability across UNIX platforms may use [`os::unix::Library::open`] with
-/// `libc::RTLD_NOLOAD`;
+///   must already be loaded. There is no portable equivalent for all UNIX targets. Users who do
+///   not care about portability across UNIX platforms may use [`os::unix::Library::open`] with
+///   `libc::RTLD_NOLOAD`;
 ///
 /// [`os::windows::Library::open_already_loaded`]: crate::os::windows::Library::open_already_loaded
 /// [`os::unix::Library::open`]: crate::os::unix::Library::open
@@ -180,7 +246,7 @@ pub mod r0_6_4 {}
 /// Release 0.6.3 (2020-08-22)
 ///
 /// * Improve documentation, allowing to view all of the os-specific functionality from
-/// documentation generated for any target;
+///   documentation generated for any target;
 /// * Add [`os::windows::Library::this`];
 /// * Added constants to use with OS-specific `Library::open`;
 /// * Add [`library_filename`].
@@ -311,9 +377,9 @@ pub mod r0_3_1 {}
 /// * Improved test suite by building our own library to test against;
 /// * All `Library`-ies now implement `Send`.
 /// * Added `impl From<os::platform::Library> for Library` and `impl From<Library> for
-/// os::platform::Library` allowing wrapping and extracting the platform-specific library handle;
+///   os::platform::Library` allowing wrapping and extracting the platform-specific library handle;
 /// * Added methods to wrap (`Symbol::from_raw`) and unwrap (`Symbol::into_raw`) the safe `Symbol`
-/// wrapper into unsafe `os::platform::Symbol`.
+///   wrapper into unsafe `os::platform::Symbol`.
 ///
 /// The last two additions focus on not restricting potential usecases of this library, allowing
 /// users of the library to circumvent safety checks if need be.
@@ -328,5 +394,5 @@ pub mod r0_3_1 {}
 /// ## os::platform
 /// * Added `os::unix::Library::open` which allows specifying arbitrary flags (e.g. `RTLD_LAZY`);
 /// * Added `os::windows::Library::get_ordinal` which allows finding a function or variable by its
-/// ordinal number;
+///   ordinal number;
 pub mod r0_3_0 {}

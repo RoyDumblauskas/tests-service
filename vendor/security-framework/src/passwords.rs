@@ -3,14 +3,15 @@
 //! If you want the extended keychain facilities only available on macOS, use the
 //! version of these functions in the macOS extensions module.
 
+#[doc(inline)]
+pub use crate::passwords_options::{PasswordOptions, AccessControlOptions};
+
 use crate::base::Result;
-use crate::passwords_options::PasswordOptions;
 use crate::{cvt, Error};
 use core_foundation::base::TCFType;
 use core_foundation::boolean::CFBoolean;
 use core_foundation::data::CFData;
 use core_foundation::dictionary::CFDictionary;
-use core_foundation::string::CFString;
 use core_foundation_sys::base::{CFGetTypeID, CFRelease, CFTypeRef};
 use core_foundation_sys::data::CFDataRef;
 use security_framework_sys::base::{errSecDuplicateItem, errSecParam};
@@ -27,15 +28,31 @@ pub fn set_generic_password(service: &str, account: &str, password: &[u8]) -> Re
     set_password_internal(&mut options, password)
 }
 
+/// Set a generic password using the given password options.
+/// Creates or updates a keychain entry.
+pub fn set_generic_password_options(password: &[u8], mut options: PasswordOptions) -> Result<()> {
+    set_password_internal(&mut options, password)
+}
+
 /// Get the generic password for the given service and account.  If no matching
 /// keychain entry exists, fails with error code `errSecItemNotFound`.
+#[doc(hidden)]
 pub fn get_generic_password(service: &str, account: &str) -> Result<Vec<u8>> {
-    let mut options = PasswordOptions::new_generic_password(service, account);
-    options.query.push((
-        unsafe { CFString::wrap_under_get_rule(kSecReturnData) },
-        CFBoolean::from(true).into_CFType(),
-    ));
-    let params = CFDictionary::from_CFType_pairs(&options.query);
+    generic_password(PasswordOptions::new_generic_password(service, account))
+}
+
+/// Get the generic password for the given service and account.  If no matching
+/// keychain entry exists, fails with error code `errSecItemNotFound`.
+///
+/// See [`PasswordOptions`] and [`new_generic_password`](PasswordOptions::new_generic_password).
+///
+/// ```rust
+/// use security_framework::passwords::{generic_password, PasswordOptions};
+/// generic_password(PasswordOptions::new_generic_password("service", "account"));
+/// ```
+pub fn generic_password(mut options: PasswordOptions) -> Result<Vec<u8>> {
+    unsafe { options.push_query(kSecReturnData, CFBoolean::from(true)); }
+    let params = options.to_dictionary();
     let mut ret: CFTypeRef = std::ptr::null();
     cvt(unsafe { SecItemCopyMatching(params.as_concrete_TypeRef(), &mut ret) })?;
     get_password_and_release(ret)
@@ -45,7 +62,7 @@ pub fn get_generic_password(service: &str, account: &str) -> Result<Vec<u8>> {
 /// If none exists, fails with error code `errSecItemNotFound`.
 pub fn delete_generic_password(service: &str, account: &str) -> Result<()> {
     let options = PasswordOptions::new_generic_password(service, account);
-    let params = CFDictionary::from_CFType_pairs(&options.query);
+    let params = options.to_dictionary();
     cvt(unsafe { SecItemDelete(params.as_concrete_TypeRef()) })
 }
 
@@ -94,11 +111,8 @@ pub fn get_internet_password(
         protocol,
         authentication_type,
     );
-    options.query.push((
-        unsafe { CFString::wrap_under_get_rule(kSecReturnData) },
-        CFBoolean::from(true).into_CFType(),
-    ));
-    let params = CFDictionary::from_CFType_pairs(&options.query);
+    unsafe { options.push_query(kSecReturnData, CFBoolean::from(true)); }
+    let params = options.to_dictionary();
     let mut ret: CFTypeRef = std::ptr::null();
     cvt(unsafe { SecItemCopyMatching(params.as_concrete_TypeRef(), &mut ret) })?;
     get_password_and_release(ret)
@@ -124,25 +138,25 @@ pub fn delete_internet_password(
         protocol,
         authentication_type,
     );
-    let params = CFDictionary::from_CFType_pairs(&options.query);
+    let params = options.to_dictionary();
     cvt(unsafe { SecItemDelete(params.as_concrete_TypeRef()) })
 }
 
 // This starts by trying to create the password with the given query params.
 // If the creation attempt reveals that one exists, its password is updated.
 fn set_password_internal(options: &mut PasswordOptions, password: &[u8]) -> Result<()> {
-    let query_len = options.query.len();
-    options.query.push((
-        unsafe { CFString::wrap_under_get_rule(kSecValueData) },
-        CFData::from_buffer(password).into_CFType(),
-    ));
+    #[allow(deprecated)]
+    let query_without_password = options.query.len();
+    unsafe { options.push_query(kSecValueData, CFData::from_buffer(password)); }
 
-    let params = CFDictionary::from_CFType_pairs(&options.query);
+    let params = options.to_dictionary();
     let mut ret = std::ptr::null();
     let status = unsafe { SecItemAdd(params.as_concrete_TypeRef(), &mut ret) };
     if status == errSecDuplicateItem {
-        let params = CFDictionary::from_CFType_pairs(&options.query[0..query_len]);
-        let update = CFDictionary::from_CFType_pairs(&options.query[query_len..]);
+        #[allow(deprecated)]
+        let (query, pass) = options.query.split_at(query_without_password);
+        let params = CFDictionary::from_CFType_pairs(query);
+        let update = CFDictionary::from_CFType_pairs(pass);
         cvt(unsafe { SecItemUpdate(params.as_concrete_TypeRef(), update.as_concrete_TypeRef()) })
     } else {
         cvt(status)
@@ -160,7 +174,7 @@ fn get_password_and_release(data: CFTypeRef) -> Result<Vec<u8>> {
         if type_id == CFData::type_id() {
             let val = unsafe { CFData::wrap_under_create_rule(data as CFDataRef) };
             let mut vec = Vec::new();
-            if val.len() > 0 {
+            if !val.is_empty() {
                 vec.extend_from_slice(val.bytes());
             }
             return Ok(vec);
@@ -211,6 +225,7 @@ mod test {
     }
 
     #[test]
+    #[cfg(feature = "OSX_10_12")]
     fn update_generic() {
         let name = "update_generic";
         set_generic_password(name, name, name.as_bytes()).expect("set_generic_password");
