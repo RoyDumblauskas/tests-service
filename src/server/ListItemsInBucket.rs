@@ -6,6 +6,7 @@ pub async fn list_items_in_bucket() -> Result<Vec<String>, ServerFnError> {
 
     // declare inside server fn to get deps
     use aws_sdk_s3::config::{Credentials,Region};
+    use aws_sdk_config::config::BehaviorVersion;
     
     // Use APP_ENV as the bucket name
     let env_bucket= env::var("ENV_BUCKET").unwrap_or("Env Var Does not exist".to_string());
@@ -14,6 +15,7 @@ pub async fn list_items_in_bucket() -> Result<Vec<String>, ServerFnError> {
     let creds = Credentials::new(bucket_user, bucket_pass, None, None, "custome creds");
 
     let client_conf = aws_sdk_s3::config::Builder::new()
+        .behavior_version_latest()
         .credentials_provider(creds)
         .endpoint_url("https://imgs.roypository.com")
         .region(Region::new("us-east-1"))
@@ -26,7 +28,7 @@ pub async fn list_items_in_bucket() -> Result<Vec<String>, ServerFnError> {
     // List objects in bucket
     let mut itemsInBucket = s3
         .list_objects_v2()
-        .bucket(env_bucket.to_owned())
+        .bucket(env_bucket.to_lowercase().to_owned())
         .max_keys(10)
         .into_paginator()
         .send();
