@@ -6,13 +6,12 @@ pub async fn list_items_in_bucket() -> Result<Vec<String>, ServerFnError> {
 
     // declare inside server fn to get deps
     use aws_sdk_s3::config::{Credentials,Region};
-    use aws_sdk_config::config::BehaviorVersion;
     
     // Use APP_ENV as the bucket name
     let env_bucket= env::var("ENV_BUCKET").unwrap_or("Env Var Does not exist".to_string());
     let bucket_user = env::var(format!("MINIO_{}_USER", env_bucket)).unwrap_or("Env Var Does not exist".to_string());;
     let bucket_pass = env::var(format!("MINIO_{}_PASSWORD", env_bucket)).unwrap_or("Env Var Does not exist".to_string());
-    let creds = Credentials::new(bucket_user, bucket_pass, None, None, "custome creds");
+    let creds = Credentials::new(bucket_user, bucket_pass, None, None, "custom creds");
 
     let client_conf = aws_sdk_s3::config::Builder::new()
         .behavior_version_latest()
