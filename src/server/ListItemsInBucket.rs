@@ -5,24 +5,28 @@ use std::env;
 pub async fn list_items_in_bucket() -> Result<Vec<String>, ServerFnError> {
 
     // declare inside server fn to get deps
-    use aws_sdk_s3;
-    use aws_config::BehaviorVersion;
+    use aws_sdk_s3::config::{Credentials,Region};
     
     // Use APP_ENV as the bucket name
-    let bucket_name = env::var("BUCKET").unwrap_or_else(|_| "DEV".to_string()).to_lowercase();
+    let env_bucket= env::var("ENV_BUCKET").unwrap_or("Env Var Does not exist".to_string());
+    let bucket_user = env::var(format!("MINIO_{}_USER", env_bucket)).unwrap_or("Env Var Does not exist".to_string());;
+    let bucket_pass = env::var(format!("MINIO_{}_PASSWORD", env_bucket)).unwrap_or("Env Var Does not exist".to_string());
+    let creds = Credentials::new(bucket_user, bucket_pass, None, None, "custome creds");
 
-    let config = aws_config::defaults(BehaviorVersion::latest())
-        .region("us-east-1")
+    let client_conf = aws_sdk_s3::config::Builder::new()
+        .credentials_provider(creds)
         .endpoint_url("https://imgs.roypository.com")
-        .load()
-        .await;
+        .region(Region::new("us-east-1"))
+        .force_path_style(true)
+        .build();
 
-    let s3 = aws_sdk_s3::Client::new(&config);
+
+    let s3 = aws_sdk_s3::Client::from_conf(client_conf);
 
     // List objects in bucket
     let mut itemsInBucket = s3
         .list_objects_v2()
-        .bucket(bucket_name.to_owned())
+        .bucket(env_bucket.to_owned())
         .max_keys(10)
         .into_paginator()
         .send();
