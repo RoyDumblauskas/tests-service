@@ -114,8 +114,12 @@
           enable = true;
           virtualHosts."${config.services.tests-service.default-nginx.hostname}" = {
             forceSSL = true;
-            enableACME = true;
-            acmeRoot = null;
+            useACMEHost = let 
+              b = builtins;
+              s = lib.strings;
+              fl = s.splitString "." "${config.services.tests-service.default-nginx.hostname}";
+                in b.concatStringsSep "." [ (b.elemAt fl (b.length fl - 2)) (b.elemAt fl (b.length fl - 1)) ];
+
             locations."/" = {
               proxyPass = "http://localhost:${toString config.services.tests-service.port}";
             };
