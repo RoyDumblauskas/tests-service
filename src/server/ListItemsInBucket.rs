@@ -1,8 +1,12 @@
 use dioxus::prelude::*;
 use std::env;
 
+use super::GetS3Client;
+
 #[server]
 pub async fn list_items_in_bucket() -> Result<Vec<String>, ServerFnError> {
+
+    let s3 = GetS3Client::get_s3_client();
 
     // List objects in bucket
     let mut itemsInBucket = s3
