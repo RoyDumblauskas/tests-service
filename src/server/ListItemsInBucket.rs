@@ -1,12 +1,13 @@
 use dioxus::prelude::*;
 use std::env;
 
-use super::GetS3Client;
-
 #[server]
 pub async fn list_items_in_bucket() -> Result<Vec<String>, ServerFnError> {
+    use crate::server_utils::get_s3_client;
 
-    let s3 = GetS3Client::get_s3_client();
+    let env_bucket= env::var("ENV_BUCKET").unwrap_or("Env Var Does not exist".to_string());
+
+    let s3 = get_s3_client().await.unwrap();
 
     // List objects in bucket
     let mut itemsInBucket = s3
@@ -34,4 +35,5 @@ pub async fn list_items_in_bucket() -> Result<Vec<String>, ServerFnError> {
     Ok(results)
 
 }
+
 

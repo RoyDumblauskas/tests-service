@@ -6,6 +6,3 @@ pub use GetStatus::*;
 mod ListItemsInBucket;
 pub use ListItemsInBucket::*;
 
-#[allow(non_snake_case)]
-mod GetS3Client;
-pub use GetS3Client::*;
