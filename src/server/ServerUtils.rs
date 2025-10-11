@@ -1,11 +1,11 @@
-#[cfg(server)]
+#[cfg(feature = "server")]
 pub mod server_utils {
-    use aws_sdk_s3::Client;
-    use aws_config;
+    use aws_sdk_s3::client::Client;
+    use std::env;
     use dioxus::prelude::*;
 
 
-    pub async fn get_s3_client() -> Result<aws_sdk_s3, ServerFnError> {
+    pub async fn get_s3_client() -> Result<Client, ServerFnError> {
 
         // declare inside server fn to get deps
         use aws_sdk_s3::config::{Credentials,Region};

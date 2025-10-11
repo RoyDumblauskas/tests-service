@@ -3,7 +3,7 @@ use std::env;
 
 #[server]
 pub async fn list_items_in_bucket() -> Result<Vec<String>, ServerFnError> {
-    use crate::server_utils::get_s3_client;
+    use crate::server::ServerUtils::server_utils::get_s3_client;
 
     let env_bucket= env::var("ENV_BUCKET").unwrap_or("Env Var Does not exist".to_string());
 
