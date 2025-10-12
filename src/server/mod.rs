@@ -3,8 +3,8 @@ mod GetStatus;
 pub use GetStatus::*;
 
 #[allow(non_snake_case)]
-mod ListItemsInBucket;
-pub use ListItemsInBucket::*;
+mod S3BucketAPIs;
+pub use S3BucketAPIs::*;
 
 #[allow(non_snake_case)]
 mod ServerUtils;
