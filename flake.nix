@@ -135,15 +135,14 @@
         ];
       };
     };
-    in {
-      packages.${system}.default = dioxusApp;
+  in {
+    packages.${system}.default = dioxusApp;
 
-      apps.${system}.default = {
-        type = "app";
-        program = "${self.packages.${system}.default}/bin/tests-service";
-      };
-    }
-    // {
-      nixosModules.default = nixosModule;
+    apps.${system}.default = {
+      type = "app";
+      program = "${self.packages.${system}.default}/bin/tests-service";
+    };
+
+    nixosModules.default = nixosModule;
   };
 }
